@@ -1,0 +1,199 @@
+export default function Portfolio() {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white font-sans">
+  
+  
+  
+  
+        {/* Grid: Sidebar + Main */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-8">
+  
+          {/* Sidebar */}
+          <aside className="md:col-span-1 bg-gray-800 rounded-2xl p-6 shadow-lg self-start max-h-[600px] overflow-auto">
+            <div className="flex flex-col items-center justify-start mt-8">
+            <img
+    src="/profile.jpg"
+    alt="Charith Geethaka"
+    className="w-[140px] h-[140px] rounded-full mb-4 object-cover"
+  />
+  
+              
+              <h1 className="text-xl font-bold">Charith Geethaka</h1>
+              <p className="text-sm text-gray-400 mb-2">Data | Software | Analytics</p>
+              <div className="space-y-2 mt-4 w-full text-center">
+                <a href="mailto:cgeethaka96@gmail.com" className="block text-blue-400 hover:underline">📧 cgeethaka96@gmail.com</a>
+                <a href="https://www.linkedin.com/in/charith-geethaka" target="_blank" rel="noopener noreferrer" className="block text-blue-400 hover:underline">💼 LinkedIn</a>
+                <a href="https://github.com/CGeethaka" target="_blank" rel="noopener noreferrer" className="block text-blue-400 hover:underline">💻 GitHub</a>
+                <a href="https://wa.me/94785677063" target="_blank" rel="noopener noreferrer" className="block text-green-400 hover:underline">📱 WhatsApp</a>
+                <p className="text-gray-400 text-xs">📍 Dunagaha, Sri Lanka</p>
+              </div>
+            </div>
+          </aside>
+  
+          {/* Main Content */}
+          <main className="md:col-span-2 space-y-6">
+  
+            {/* About Me */}
+            <section className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+              <h2 className="text-xl font-semibold mb-2">About Me</h2>
+              <p className="text-gray-300">
+                I'm Charith Geethaka, a Software Engineering graduate currently pursuing an MSc in Business Analytics.
+                I’m passionate about using data and technology to solve real-world problems, whether it's through analyzing trends,
+                optimizing processes, or building smart, data-driven systems.With a strong foundation in programming, data analysis, and visualization,
+                I enjoy working across domains — from business intelligence and software tools to marketing analytics and performance reporting.<br/> <br />
+                My toolkit includes Python, SQL, Power BI, Excel, and big data tools, and I’m always eager to learn and adapt in dynamic environments.
+  
+                <br /> <br />
+                I'm looking for opportunities where I can apply both my technical background and analytical mindset to create value, improve decision-making, and support digital transformation.
+  
+  
+              </p>
+            </section>
+  
+            {/* Skills */}
+            <section className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+              <h2 className="text-xl font-semibold mb-4">Skills & Tools</h2>
+  
+              <div className="mb-4">
+                <h4 className="font-semibold text-gray-400">Languages</h4>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {["Python", "R", "C#", "Kotlin"].map(skill => (
+                    <span key={skill} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{skill}</span>
+                  ))}
+                </div>
+              </div>
+  
+              <div className="mb-4">
+                <h4 className="font-semibold text-gray-400">Big Data</h4>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {["Hadoop", "HDFS", "MapReduce"].map(tool => (
+                    <span key={tool} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{tool}</span>
+                  ))}
+                </div>
+              </div>
+  
+              <div className="mb-4">
+                <h4 className="font-semibold text-gray-400">Data Analysis</h4>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {["Power BI", "Excel", "NumPy", "pandas", "matplotlib", "SciPy"].map(tool => (
+                    <span key={tool} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{tool}</span>
+                  ))}
+                </div>
+              </div>
+  
+              <div className="mb-4">
+                <h4 className="font-semibold text-gray-400">Web</h4>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {["HTML", "CSS", "Bootstrap", "React.js"].map(tech => (
+                    <span key={tech} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{tech}</span>
+                  ))}
+                </div>
+              </div>
+  
+              <div>
+                <h4 className="font-semibold text-gray-400">Concepts</h4>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {["OOP", "DSA", "Agile", "SDLC", "PDLC"].map(concept => (
+                    <span key={concept} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{concept}</span>
+                  ))}
+                </div>
+              </div>
+            </section>
+  
+          </main>
+        </div>
+  
+        {/* Projects Section (Full Width) */}
+        <div className="px-8 pb-8">
+          <section className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full">
+            <h2 className="text-xl font-semibold mb-4">Projects</h2>
+            <div className="space-y-6">
+  
+              {/* Project 1 */}
+              <div className="bg-gray-700 p-4 rounded-xl shadow-md">
+                <h3 className="text-lg font-bold text-white">Lab Management System</h3>
+                <p className="text-gray-300 mt-1">A full-stack web application designed to streamline the booking and management of laboratories and equipment
+                in an educational or research environment. This system provides role-based access for administrators,lab managers, and students,
+                allowing them to efficiently manage labs, schedule equipment usage, and track bookings.</p><br />
+                <p className="text-gray-400 text-sm mt-1"><strong>Technologies Used :</strong> React.js (frontend), Node.js + Express (backend), MySQL (database)<br />
+                <strong>Key Features :</strong>
+                        User authentication and role-based access (Admin, Lab Assistant, Student).
+  
+                        Lab and equipment listings with availability tracking.
+  
+                        Real-time booking and scheduling system.
+  
+                        Admin dashboard for managing users, labs, equipment, and bookings.
+  
+  </p>
+                <a href="https://github.com/CGeethaka/lab-Management-System" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+              </div>
+  
+  
+              {/* Project 2 */}
+              <div className="bg-gray-700 p-4 rounded-xl shadow-md">
+                <h3 className="text-lg font-bold text-white">Online Railway management System</h3>
+                <p className="text-gray-300 mt-1">Designed and developed a comprehensive system to optimize railway operations and enhance the passenger experience. Conducted
+                rigorous performance testing to ensure system scalability and reliability</p><br />
+                <p className="text-gray-400 text-sm mt-1">Technologies Used: React.js for frontend, Express.js for backend, and MySQL for database management<br />
+                Key Features: Ticket Booking Module, Train Tracking Module, Passenger Management Module, Revenue Management Module</p>
+                <a href="https://github.com/CGeethaka/Online-Railway-Management-System" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+              </div>
+  
+              
+  
+              {/* Project 3 */}
+              <div className="bg-gray-700 p-4 rounded-xl shadow-md">
+                <h3 className="text-lg font-bold text-white">Agile Adoption in the Crossrail Project - United Kingdom</h3>
+                <p className="text-gray-300 mt-1">Analyzed the adoption of Agile methodologies in the Crossrail Project, one of Europe’s largest infrastructure projects. Focused on
+                addressing challenges in tunneling, station construction, and integration with existing rail systems</p><br />
+                <p className="text-gray-400 text-sm mt-1"><strong>Key Agile Practices Implemented :</strong> Iterative Design and Construction, Collaborative Frameworks, Digital Integration, Risk
+                Management.<br /> <strong>Achievements :</strong>  Enhanced collaboration and communication among multi-disciplinary teams, Improved risk mitigation through
+                  proactive and adaptive strategies, Demonstrated scalability of Agile practices for large-scale infrastructure projects.<br /> <strong>Lessons Learned :</strong>
+                   Tailored Agile practices to align with complex project objectives. Early stakeholder involvement was pivotal for
+                  minimizing resistance to Agile workflows. Emphasized flexibility and resilience to address unexpected challenges.
+                    </p>
+                <a href="https://github.com/CGeethaka/Crossrail-project-in-the-UK" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+              </div>
+  
+  
+  
+            </div>
+          </section>
+        </div>
+  
+        {/* Experience Section */}
+        <div className="px-8 pb-8">
+          <section className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full">
+            <h2 className="text-xl font-semibold mb-4">Experience</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-bold text-white">Lab Assistant - Packages Lanka Pvt Ltd | Ja-Ela,Ekala</h3>
+                <p className="text-sm text-gray-400">Dec 2021 – Oct 2024</p>
+                <ul className="list-disc list-inside text-gray-300 space-y-1 mt-2">
+                  <li>Conducted laboratory tests in pre- and post-analytic phases, ensured the accuracy and reliability of results.</li>
+                  <li>Followed Standard Operating Procedures (SOPs) and methodologies, ensuring strict adherence to quality standards.</li>
+                  <li>Maintained detailed documentation of processes and data, showcasing attention to detail and strong organizational skills.</li>
+                  <li>Collaborated with cross-functional teams to analyze results and support decision-making processes.</li>
+                  <li>Documented and analyzed test results to support data-driven quality assurance decisions.</li>
+          </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+  
+        
+  
+        {/* Contact Section */}
+        <div className="px-8 pb-8">
+          <section className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full">
+            <h2 className="text-xl font-semibold mb-4">Contact Me</h2>
+            <p className="text-gray-300">Feel free to reach out via email or LinkedIn for collaboration or opportunities!</p>
+            <p className="mt-2 text-blue-400">cgeethaka96@gmail.com</p>
+            <p className="mt-2 text-blue-400">+94 785677063</p>
+          </section>
+        </div>
+  
+      </div>
+    );
+  }
