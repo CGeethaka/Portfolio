@@ -37,15 +37,11 @@ export default function Portfolio() {
             <section className="bg-gray-800 p-6 rounded-2xl shadow-lg">
               <h2 className="text-xl font-semibold mb-2">About Me</h2>
               <p className="text-gray-300">
-                I'm Charith Geethaka, a Software Engineering graduate currently pursuing an MSc in Business Analytics.
-                I’m passionate about using data and technology to solve real-world problems, whether it's through analyzing trends,
-                optimizing processes, or building smart, data-driven systems.With a strong foundation in programming, data analysis, and visualization,
-                I enjoy working across domains — from business intelligence and software tools to marketing analytics and performance reporting.<br/> <br />
-                My toolkit includes Python, SQL, Power BI, Excel, and big data tools, and I’m always eager to learn and adapt in dynamic environments.
-  
+                I’m Charith Geethaka, a Software Engineering graduate currently pursuing an MSc in Business Analytics. I’m passionate about using data and statistics to solve real-world problems, improve efficiency, and support smarter decision-making.<br/> <br />
+
+                My expertise includes Power BI, Excel (Pivot Tables), SQL, and Python (NumPy, Pandas, SciPy, Seaborn, Matplotlib), combined with a strong foundation in Business Statistics. I enjoy working with data to identify patterns, optimize processes, and deliver insights that add measurable value.
                 <br /> <br />
-                I'm looking for opportunities where I can apply both my technical background and analytical mindset to create value, improve decision-making, and support digital transformation.
-  
+               With a balance of technical knowledge, analytical thinking, and adaptability, I’m committed to contributing in dynamic environments where both data-driven insights and business impact matter.
   
               </p>
             </section>
@@ -196,4 +192,5 @@ export default function Portfolio() {
   
       </div>
     );
+
   }
