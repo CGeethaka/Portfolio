@@ -106,7 +106,7 @@ export default function Portfolio() {
             <div className="space-y-6">
   
 
-                 {/* Project 1 */}
+                 {/* Airline-Passenger-Satisfaction */}
               <div className="bg-gray-700 p-4 rounded-xl shadow-md">
                 <h3 className="text-lg font-bold text-white">Airline Passenger Satisfaction Analysis</h3>
                 <p className="text-gray-300 mt-1">A data analytics project focused on understanding the factors that drive passenger satisfaction in the airline industry. Using a dataset of 12,981 records, I explored customer demographics, flight details, service ratings, and delays to identify key drivers of satisfaction.</p><br />
@@ -124,6 +124,25 @@ export default function Portfolio() {
               </div>
 
 
+
+{/* Power BI Dashboard – U.S. Trade & Tariff Impact Analysis */}
+<div className="bg-gray-700 p-4 rounded-xl shadow-md">
+  <h3 className="text-lg font-bold text-white">Power BI Dashboard – U.S. Trade & Tariff Impact Analysis</h3>
+  <p className="text-gray-300 mt-1">
+    Analyzed the economic effects of U.S. tariffs in 2024, focusing on trade deficits, tariff responses, and product-level price impacts. Developed an interactive Power BI dashboard for dynamic insights.
+  </p><br />
+  <p className="text-gray-400 text-sm mt-1">
+    <strong>Technologies Used:</strong> Power BI, DAX, Data Modeling, Visualization.<br />
+    <strong>Approach:</strong> Integrated three datasets (country-level trade data, time-series tariff data, product-level price data).<br />
+    <strong>DAX Measures:</strong> Net Trade, Deficit per Capita, Tariff Intensity %, Price Increase (%).<br />
+    <strong>Visuals Built:</strong> Map charts, KPI cards, area charts, pie charts, and product impact tables with slicers and tooltips.<br />
+    <strong>Impact:</strong> Enabled better understanding of tariff effects on trade balance and consumer prices through interactive storytelling.
+  </p>
+  <a href="https://github.com/CGeethaka/us-trade-tariff-impact-analysis" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+</div>
+                
+                
+                
 {/* Excel-Superstore-Analysis */}
 <div className="bg-gray-700 p-4 rounded-xl shadow-md">
   <h3 className="text-lg font-bold text-white">Superstore Sales Analysis Dashboard</h3>
@@ -137,6 +156,23 @@ export default function Portfolio() {
   </p>
   <a href="https://github.com/CGeethaka/Excel-Superstore-Analysis" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
 </div>
+
+
+                {/* Retail-Economic-Data-Visualization */}
+<div className="bg-gray-700 p-4 rounded-xl shadow-md">
+  <h3 className="text-lg font-bold text-white">Retail & Economic Data Visualization (Excel)</h3>
+  <p className="text-gray-300 mt-1">
+    A business analytics project linking retail sales data with economic indicators (CPI and unemployment levels). The dashboards reveal demand patterns, seasonal fluctuations, and macroeconomic effects on sales.
+  </p><br />
+  <p className="text-gray-400 text-sm mt-1">
+    <strong>Technologies Used:</strong> Excel (Pivot Tables, Pivot Charts, Filters, Aggregations, Trendlines).<br />
+    <strong>Dataset:</strong> 1,000+ weekly sales records.<br />
+    <strong>Analysis Performed:</strong> Store-level sales performance tracking, seasonal demand & volatility detection, correlation between sales, CPI, and unemployment.<br />
+    <strong>Impact:</strong> Provided actionable insights for supply chain planning, forecasting, and pricing decisions.
+  </p>
+  <a href="https://github.com/CGeethaka/Retail-Economic-Data-Visualization" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+</div>
+                
                 
                 
                 {/* Project 1 */}
@@ -228,5 +264,6 @@ export default function Portfolio() {
     );
 
   }
+
 
 
