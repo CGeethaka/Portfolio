@@ -105,7 +105,26 @@ export default function Portfolio() {
             <h2 className="text-xl font-semibold mb-4">Projects</h2>
             <div className="space-y-6">
   
-              {/* Project 1 */}
+
+                 {/* Project 1 */}
+              <div className="bg-gray-700 p-4 rounded-xl shadow-md">
+                <h3 className="text-lg font-bold text-white">Airline Passenger Satisfaction Analysis</h3>
+                <p className="text-gray-300 mt-1">A data analytics project focused on understanding the factors that drive passenger satisfaction in the airline industry. Using a dataset of 12,981 records, I explored customer demographics, flight details, service ratings, and delays to identify key drivers of satisfaction.</p><br />
+                <p className="text-gray-400 text-sm mt-1"><strong>Technologies Used :</strong> Python, Pandas, Matplotlib, Seaborn.<br />
+                <strong>Approach :</strong>
+                        Performed full exploratory data analysis (EDA), including data cleaning, aggregation, and visualization.
+                <strong>Key Insights: :</strong>
+                    Found trends in satisfaction based on age, gender, flight distance, customer type (loyal vs. new), and delay factors.
+                <strong>Impact</strong>
+                    Demonstrated how airlines can use data-driven insights to improve service quality and customer retention.
+               
+                    
+  </p>
+                <a href="https://github.com/CGeethaka/Airline-Passenger-Satisfaction" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+              </div>
+                
+                
+                {/* Project 1 */}
               <div className="bg-gray-700 p-4 rounded-xl shadow-md">
                 <h3 className="text-lg font-bold text-white">Lab Management System</h3>
                 <p className="text-gray-300 mt-1">A full-stack web application designed to streamline the booking and management of laboratories and equipment
@@ -194,3 +213,4 @@ export default function Portfolio() {
     );
 
   }
+
