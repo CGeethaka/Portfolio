@@ -122,6 +122,21 @@ export default function Portfolio() {
   </p>
                 <a href="https://github.com/CGeethaka/Airline-Passenger-Satisfaction" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
               </div>
+
+
+{/* Excel-Superstore-Analysis */}
+<div className="bg-gray-700 p-4 rounded-xl shadow-md">
+  <h3 className="text-lg font-bold text-white">Superstore Sales Analysis Dashboard</h3>
+  <p className="text-gray-300 mt-1">
+    Designed and implemented an interactive Excel dashboard to analyze sales and profitability for a retail Superstore dataset. The dashboard provides managers with quick insights into performance by region, segment, and product categories.
+  </p><br />
+  <p className="text-gray-400 text-sm mt-1">
+    <strong>Technologies Used:</strong> Excel, Pivot Tables, Pivot Charts, Slicers, KPI Metrics.<br />
+    <strong>Features:</strong> Monthly sales & profit trends, regional performance comparison, customer segment and product category analysis.<br />
+    <strong>Impact:</strong> Enabled stakeholders to track KPIs, identify top-performing regions/customers, and make data-informed decisions for sales strategies.
+  </p>
+  <a href="https://github.com/CGeethaka/Excel-Superstore-Analysis" target="_blank" className="text-blue-400 hover:underline mt-2 inline-block">🔗 View on GitHub</a>
+</div>
                 
                 
                 {/* Project 1 */}
@@ -213,4 +228,5 @@ export default function Portfolio() {
     );
 
   }
+
 
