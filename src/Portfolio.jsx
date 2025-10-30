@@ -237,11 +237,19 @@ export default function Portfolio() {
                 <h3 className="font-bold text-white">Lab Assistant - Packages Lanka Pvt Ltd | Ja-Ela,Ekala</h3>
                 <p className="text-sm text-gray-400">Dec 2021 – Oct 2024</p>
                 <ul className="list-disc list-inside text-gray-300 space-y-1 mt-2">
-                  <li>Conducted laboratory tests in pre- and post-analytic phases, ensured the accuracy and reliability of results.</li>
-                  <li>Followed Standard Operating Procedures (SOPs) and methodologies, ensuring strict adherence to quality standards.</li>
-                  <li>Maintained detailed documentation of processes and data, showcasing attention to detail and strong organizational skills.</li>
-                  <li>Collaborated with cross-functional teams to analyze results and support decision-making processes.</li>
-                  <li>Documented and analyzed test results to support data-driven quality assurance decisions.</li>
+                  <li>Performed routine laboratory testing to ensure product quality and compliance with standard operating procedures</li>
+                  <li>Collected, recorded, and organized testing data for various packaging materials with different material combinations.
+</li>
+                  <li>Monitored product quality, identified anomalies, and communicated findings with detailed reports to relevant teams for corrective
+actions.</li>
+                  <li>Created Excel-based summaries and dashboards to track testing trends and support decision-making.</li>
+                  <li>Occasionally used Minitab for basic statistical analysis and quality data visualization to support process improvement.
+</li>
+
+                <li>Collaborated with production and quality teams to ensure data accuracy, streamline workflows, and maintain compliance with
+standards.</li>
+                
+                    
           </ul>
               </div>
             </div>
@@ -264,6 +272,7 @@ export default function Portfolio() {
     );
 
   }
+
 
 
 
