@@ -1,6 +1,6 @@
 export default function Portfolio() {
     return (
-      <div className="min-h-screen bg-gray-900 text-white font-sans">
+      <div className="min-h-screen bg-gray-50 text-white font-sans">
   
   
   
@@ -9,7 +9,7 @@ export default function Portfolio() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-8">
   
           {/* Sidebar */}
-          <aside className="md:col-span-1 bg-gray-800 rounded-2xl p-6 shadow-lg self-start max-h-[600px] overflow-auto">
+          <aside className="md:col-span-1 bg-white rounded-2xl p-6 shadow-lg self-start max-h-[600px] overflow-auto">
             <div className="flex flex-col items-center justify-start mt-8">
             <img
     src="/profile.jpg"
@@ -19,13 +19,13 @@ export default function Portfolio() {
   
               
               <h1 className="text-xl font-bold">Charith Geethaka</h1>
-              <p className="text-sm text-gray-400 mb-2">Data | Software | Analytics</p>
+              <p className="text-sm text-gray-700 mb-2">Data | Software | Analytics</p>
               <div className="space-y-2 mt-4 w-full text-center">
                 <a href="mailto:cgeethaka96@gmail.com" className="block text-blue-400 hover:underline">📧 cgeethaka96@gmail.com</a>
                 <a href="https://www.linkedin.com/in/charith-geethaka" target="_blank" rel="noopener noreferrer" className="block text-blue-400 hover:underline">💼 LinkedIn</a>
                 <a href="https://github.com/CGeethaka" target="_blank" rel="noopener noreferrer" className="block text-blue-400 hover:underline">💻 GitHub</a>
                 <a href="https://wa.me/94785677063" target="_blank" rel="noopener noreferrer" className="block text-green-400 hover:underline">📱 WhatsApp</a>
-                <p className="text-gray-400 text-xs">📍 Dunagaha, Sri Lanka</p>
+                <p className="text-gray-700 text-xs">📍 Dunagaha, Sri Lanka</p>
               </div>
             </div>
           </aside>
@@ -34,7 +34,7 @@ export default function Portfolio() {
           <main className="md:col-span-2 space-y-6">
   
             {/* About Me */}
-            <section className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <section className="bg-white p-6 rounded-2xl shadow-lg">
               <h2 className="text-xl font-semibold mb-2">About Me</h2>
               <p className="text-gray-300">
                 I’m Charith Geethaka, a Software Engineering graduate currently pursuing an MSc in Business Analytics. I’m passionate about using data and statistics to solve real-world problems, improve efficiency, and support smarter decision-making.<br/> <br />
@@ -47,50 +47,50 @@ export default function Portfolio() {
             </section>
   
             {/* Skills */}
-            <section className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-              <h2 className="text-xl font-semibold mb-4">Skills & Tools</h2>
+            <section className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">Skills & Tools</h2>
   
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-400">Languages</h4>
+                <h4 className="font-semibold text-gray-700">Languages</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {["Python", "R", "C#", "Kotlin"].map(skill => (
-                    <span key={skill} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{skill}</span>
+                    <span key={skill} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm border border-blue-200">{skill}</span>
                   ))}
                 </div>
               </div>
   
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-400">Big Data</h4>
+                <h4 className="font-semibold text-gray-700">Big Data</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {["Hadoop", "HDFS", "MapReduce"].map(tool => (
-                    <span key={tool} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{tool}</span>
+                    <span key={tool} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm border border-purple-200">{tool}</span>
                   ))}
                 </div>
               </div>
   
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-400">Data Analysis</h4>
+                <h4 className="font-semibold text-gray-700">Data Analysis</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {["Power BI", "Excel", "NumPy", "pandas", "matplotlib", "SciPy"].map(tool => (
-                    <span key={tool} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{tool}</span>
+                    <span key={tool} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm border border-green-200">{tool}</span>
                   ))}
                 </div>
               </div>
   
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-400">Web</h4>
+                <h4 className="font-semibold text-gray-700">Web</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {["HTML", "CSS", "Bootstrap", "React.js"].map(tech => (
-                    <span key={tech} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{tech}</span>
+                    <span key={tech} className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm border border-orange-200">{tech}</span>
                   ))}
                 </div>
               </div>
   
               <div>
-                <h4 className="font-semibold text-gray-400">Concepts</h4>
+                <h4 className="font-semibold text-gray-700">Concepts</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {["OOP", "DSA", "Agile", "SDLC", "PDLC"].map(concept => (
-                    <span key={concept} className="bg-gray-700 px-3 py-1 rounded-full text-sm">{concept}</span>
+                    <span key={concept} className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm border border-indigo-200">{concept}</span>
                   ))}
                 </div>
               </div>
@@ -101,7 +101,7 @@ export default function Portfolio() {
   
         {/* Projects Section (Full Width) */}
         <div className="px-8 pb-8">
-          <section className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full">
+          <section className="bg-white p-6 rounded-2xl shadow-lg w-full">
             <h2 className="text-xl font-semibold mb-4">Projects</h2>
             <div className="space-y-6">
   
@@ -230,7 +230,7 @@ export default function Portfolio() {
   
         {/* Experience Section */}
         <div className="px-8 pb-8">
-          <section className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full">
+          <section className="bg-white p-6 rounded-2xl shadow-lg w-full">
             <h2 className="text-xl font-semibold mb-4">Experience</h2>
             <div className="space-y-4">
               <div>
@@ -260,7 +260,7 @@ standards.</li>
   
         {/* Contact Section */}
         <div className="px-8 pb-8">
-          <section className="bg-gray-800 p-6 rounded-2xl shadow-lg w-full">
+          <section className="bg-white p-6 rounded-2xl shadow-lg w-full">
             <h2 className="text-xl font-semibold mb-4">Contact Me</h2>
             <p className="text-gray-300">Feel free to reach out via email or LinkedIn for collaboration or opportunities!</p>
             <p className="mt-2 text-blue-400">cgeethaka96@gmail.com</p>
@@ -272,6 +272,7 @@ standards.</li>
     );
 
   }
+
 
 
 
