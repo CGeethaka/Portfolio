@@ -37,7 +37,7 @@ export default function Portfolio() {
             <section className="bg-gray-800 p-6 rounded-2xl shadow-lg">
               <h2 className="text-xl font-semibold mb-2">About Me</h2>
               <p className="text-gray-300">
-                I’m Charith Geethaka, a Software Engineering graduate currently pursuing an MSc in Business Analytics. I’m passionate about using data and statistics to solve real-world problems, improve efficiency, and support smarter decision-making.<br/> <br />
+                I’m Charith Geethaka, a Software Engineering graduate currently pursuing an Master’s in Business Analytics. I’m passionate about using data and statistics to solve real-world problems, improve efficiency, and support smarter decision-making.<br/> <br />
 
                 My expertise includes Power BI, Excel (Pivot Tables), SQL, and Python (NumPy, Pandas, SciPy, Seaborn, Matplotlib), combined with a strong foundation in Business Statistics. I enjoy working with data to identify patterns, optimize processes, and deliver insights that add measurable value.
                 <br /> <br />
@@ -272,6 +272,7 @@ standards.</li>
     );
 
   }
+
 
 
 
