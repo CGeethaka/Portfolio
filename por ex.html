@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Charith Geethaka — Data Analyst & Business Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --void:#020408;
+  --deep:#040b14;
+  --surface:rgba(0,240,200,0.035);
+  --panel:rgba(4,20,40,0.85);
+  --border:rgba(0,240,200,0.1);
+  --border2:rgba(168,85,247,0.12);
+  --cyan:#00f0c8;
+  --cyan2:#00c4a7;
+  --cyan-dim:rgba(0,240,200,0.08);
+  --cyan-glow:rgba(0,240,200,0.15);
+  --purple:#a855f7;
+  --purple-dim:rgba(168,85,247,0.1);
+  --amber:#f59e0b;
+  --amber-dim:rgba(245,158,11,0.1);
+  --blue:#38bdf8;
+  --text:#c8e6e0;
+  --text2:#ffffff;
+  --muted:#3d6b64;
+  --grid:rgba(0,240,200,0.04);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);color:var(--text);
+  font-family:'IBM Plex Sans',sans-serif;
+  overflow-x:hidden;cursor:none;
+}
+
+/* ── Crosshair Cursor ── */
+#cur-h,#cur-v{position:fixed;background:var(--cyan);pointer-events:none;z-index:9999;opacity:.5;}
+#cur-h{width:18px;height:1px;transform:translate(-50%,-50%);}
+#cur-v{width:1px;height:18px;transform:translate(-50%,-50%);}
+#cur-dot{
+  position:fixed;width:5px;height:5px;border-radius:50%;
+  background:var(--cyan);pointer-events:none;z-index:10000;
+  transform:translate(-50%,-50%);box-shadow:0 0 8px var(--cyan);
+}
+#cur-ring{
+  position:fixed;width:28px;height:28px;
+  border:1px solid rgba(0,240,200,.35);border-radius:50%;
+  pointer-events:none;z-index:9998;transform:translate(-50%,-50%);
+  transition:width .25s,height .25s,border-color .25s;
+}
+#cur-ring.h{width:48px;height:48px;border-color:var(--cyan);}
+
+/* ── Canvases ── */
+#neural-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#entropy-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.7;}
+#grid-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;}
+
+/* ── Math Floaters ── */
+.math-floater{
+  position:fixed;font-family:'IBM Plex Mono',monospace;
+  color:rgba(0,240,200,.12);font-size:.65rem;letter-spacing:.1em;
+  pointer-events:none;z-index:2;white-space:nowrap;
+  animation:mathFloat linear infinite;
+}
+@keyframes mathFloat{
+  0%{transform:translateY(0) translateX(0);opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{transform:translateY(-120px) translateX(30px);opacity:0;}
+}
+
+/* ── Layout ── */
+.wrap{position:relative;z-index:5;}
+
+/* ── Nav ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 3.5rem;
+  border-bottom:1px solid transparent;
+  transition:all .4s;
+}
+nav.sc{
+  background:rgba(2,4,8,.85);
+  backdrop-filter:blur(20px);
+  border-color:var(--border);
+}
+.nav-logo{
+  font-family:'Lato',monospace;font-size:.9rem;font-weight:700;
+  color:var(--text);text-decoration:none;letter-spacing:.12em;
+  display:flex;align-items:center;gap:.7rem;
+}
+.logo-icon{
+  width:28px;height:28px;border:1px solid var(--cyan);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;color:var(--cyan);position:relative;overflow:hidden;
+}
+.logo-icon::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(0,240,200,.1));
+}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--text2);text-decoration:none;
+  transition:color .3s;position:relative;
+}
+.nav-links a::before{
+  content:attr(data-n);position:absolute;top:-1rem;left:0;
+  font-size:.48rem;color:var(--cyan);opacity:.6;
+}
+.nav-links a:hover{color:var(--cyan);}
+.nav-cta{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--cyan);
+  border:1px solid rgba(0,240,200,.3);padding:.5rem 1.2rem;
+  border-radius:2px;text-decoration:none;
+  transition:all .3s;background:transparent;
+  position:relative;overflow:hidden;
+}
+.nav-cta::before{
+  content:'';position:absolute;inset:0;
+  background:var(--cyan);transform:translateX(-100%);
+  transition:transform .3s;z-index:-1;
+}
+.nav-cta:hover{color:var(--void);}
+.nav-cta:hover::before{transform:translateX(0);}
+.ham{display:none;flex-direction:column;gap:4px;cursor:pointer;}
+.ham span{width:20px;height:1px;background:var(--text);}
+
+/* ── Mobile Nav ── */
+.mobnav{
+  display:none;position:fixed;inset:0;
+  background:rgba(2,4,8,.97);backdrop-filter:blur(30px);
+  z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;
+}
+.mobnav.open{display:flex;}
+.mobnav a{
+  font-family:'Lato',monospace;font-size:1.5rem;font-weight:600;
+  letter-spacing:.12em;color:var(--text);text-decoration:none;transition:color .3s;
+}
+.mobnav a:hover{color:var(--cyan);}
+.mob-x{position:absolute;top:1.5rem;right:3.5rem;font-size:1.2rem;color:var(--text2);cursor:pointer;}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;padding:0 3.5rem;
+  position:relative;overflow:hidden;
+}
+.hero-readout{
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  color:var(--cyan);letter-spacing:.3em;margin-bottom:2rem;
+  display:flex;align-items:center;gap:1.5rem;
+  opacity:0;animation:fadeUp .7s .3s ease forwards;
+}
+.readout-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.hero-name{
+  font-family:'Lato',monospace;font-weight:900;
+  font-size:clamp(2.8rem,7vw,7.5rem);
+  line-height:.95;letter-spacing:-.01em;
+  color:var(--text);margin-bottom:.6rem;
+  text-shadow:0 0 80px rgba(0,240,200,.15);
+}
+.hero-name .line{display:block;overflow:hidden;}
+.hero-name .line span{
+  display:block;opacity:0;transform:translateY(100%);
+  animation:slideUp 1s ease forwards;
+}
+.hero-name .line:nth-child(1) span{animation-delay:.4s;}
+.hero-name .line:nth-child(2) span{animation-delay:.6s;}
+.hero-role{
+  font-family:'IBM Plex Mono',monospace;font-size:clamp(.9rem,2vw,1.3rem);
+  color:var(--cyan);letter-spacing:.1em;margin-bottom:2.5rem;
+  opacity:0;animation:fadeUp .8s .9s ease forwards;
+}
+.hero-role .sep{color:var(--muted);margin:0 .8rem;}
+.hero-bottom{
+  display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;
+  opacity:0;animation:fadeUp .8s 1.1s ease forwards;
+}
+.hero-desc{
+  font-size:.9rem;font-weight:300;line-height:1.85;color:var(--text2);
+  border-left:1px solid var(--border);padding-left:1.5rem;
+}
+
+
+
+.hero-metrics{display:flex;flex-direction:column;gap:.7rem;}
+.metric{
+  display:flex;align-items:center;gap:1rem;
+  padding:.7rem 1rem;border:1px solid var(--border);
+  background:var(--surface);border-radius:2px;
+  font-family:'IBM Plex Mono',monospace;font-size:.65rem;
+  transition:border-color .3s,background .3s;
+}
+.metric:hover{border-color:var(--cyan);background:var(--cyan-dim);}
+.metric-key{color:var(--text2);letter-spacing:.1em;flex:1;}
+.metric-val{color:var(--cyan);font-weight:400;}
+.metric-bar{
+  width:60px;height:2px;background:rgba(255,255,255,.06);
+  border-radius:1px;overflow:hidden;
+}
+.metric-fill{
+  height:100%;background:linear-gradient(to right,var(--cyan),var(--purple));
+  border-radius:1px;
+}
+.hero-formula{
+  position:absolute;right:5rem;top:50%;transform:translateY(-50%);
+  opacity:0;animation:fadeIn 2s 1.5s ease forwards;
+  display:flex;flex-direction:column;gap:1.5rem;align-items:flex-end;
+}
+.formula{
+  font-family:'IBM Plex Mono',monospace;font-size:.7rem;
+  color:rgba(0,240,200,.18);letter-spacing:.08em;line-height:1.6;
+  text-align:right;
+}
+.formula .hl{color:rgba(0,240,200,.5);}
+
+/* ── Section base ── */
+section{padding:7rem 3.5rem;position:relative;}
+section + section{border-top:1px solid var(--border);}
+.slabel{
+  display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);
+}
+.slabel::before{content:'';width:20px;height:1px;background:var(--cyan);}
+.slabel span{opacity:.6;}
+.sh{
+  font-family:'Lato',monospace;
+  font-size:clamp(1.8rem,3.5vw,3rem);
+  font-weight:700;color:var(--text);line-height:1.05;letter-spacing:.02em;
+}
+.sh em{font-style:normal;color:var(--cyan);}
+.sh-purple em{color:var(--purple);}
+.sh-amber em{color:var(--amber);}
+
+/* ── ABOUT ── */
+#about{display:grid;grid-template-columns:340px 1fr;gap:4rem;align-items:start;}
+
+/* Identity card */
+.id-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:4px;overflow:hidden;position:sticky;top:6rem;
+}
+.id-card-header{
+  padding:1.5rem;border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(0,240,200,.05),transparent);
+  position:relative;
+}
+.id-card-header::before{
+  content:'IDENTITY.json';position:absolute;top:.7rem;right:.9rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.5rem;
+  color:var(--muted);letter-spacing:.15em;
+}
+.id-avatar{
+  width:72px;height:72px;border-radius:4px;
+  background:linear-gradient(135deg,var(--cyan-dim),var(--purple-dim));
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Lato',monospace;font-size:1.4rem;font-weight:700;
+  color:var(--cyan);margin-bottom:1rem;
+  position:relative;
+}
+.id-avatar::after{
+  content:'';position:absolute;top:2px;left:2px;right:2px;bottom:2px;
+  border:1px dashed rgba(0,240,200,.2);border-radius:3px;
+}
+.id-name{
+  font-family:'Lato',monospace;font-size:.95rem;font-weight:700;
+  color:var(--text);letter-spacing:.06em;
+}
+.id-role{
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  color:var(--cyan);letter-spacing:.12em;margin-top:.3rem;
+}
+.id-body{padding:1.2rem 1.5rem;}
+.id-row{
+  display:flex;align-items:flex-start;gap:.8rem;
+  padding:.55rem 0;border-bottom:1px solid rgba(0,240,200,.05);
+  font-size:.72rem;
+}
+.id-row:last-child{border-bottom:none;}
+.id-key{
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  color:var(--muted);letter-spacing:.1em;min-width:60px;padding-top:.05rem;
+}
+.id-val{color:var(--text2);line-height:1.5;word-break:break-word;}
+.id-val a{color:var(--cyan);text-decoration:none;transition:opacity .3s;}
+.id-val a:hover{opacity:.7;}
+.id-status{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  color:var(--cyan);padding:1rem 1.5rem;border-top:1px solid var(--border);
+  background:var(--cyan-dim);
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 1.5s infinite;}
+
+/* About content */
+.about-content{}
+.about-bio{
+  font-family:'IBM Plex Sans',sans-serif;font-size:1rem;
+  font-weight:300;line-height:1.95;color:var(--text2);margin:2.5rem 0 2rem;
+  padding:1.5rem;border:1px solid var(--border);
+  background:var(--surface);border-radius:3px;
+  border-left:2px solid var(--cyan);
+}
+.about-bio strong{color:var(--text);font-weight:400;}
+
+/* Skill Bars */
+.skill-bars{margin:2rem 0;}
+.sbar-title{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);
+  margin-bottom:1.2rem;
+}
+.sbar-item{margin-bottom:1.1rem;}
+.sbar-top{display:flex;justify-content:space-between;margin-bottom:.35rem;}
+.sbar-label{font-size:.75rem;color:var(--text);}
+.sbar-pct{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--cyan);
+}
+.sbar-track{
+  height:3px;background:rgba(255,255,255,.05);border-radius:2px;
+  overflow:hidden;position:relative;
+}
+.sbar-fill{
+  height:100%;width:0%;border-radius:2px;
+  transition:width 1.4s cubic-bezier(.4,0,.2,1);
+  position:relative;
+}
+.sbar-fill::after{
+  content:'';position:absolute;right:0;top:-2px;
+  width:7px;height:7px;border-radius:50%;
+  background:inherit;box-shadow:0 0 8px currentColor;
+}
+.fill-cyan{background:linear-gradient(to right,var(--cyan2),var(--cyan));}
+.fill-purple{background:linear-gradient(to right,#7c3aed,var(--purple));}
+.fill-amber{background:linear-gradient(to right,#d97706,var(--amber));}
+.fill-blue{background:linear-gradient(to right,#0284c7,var(--blue));}
+
+/* Lang tags */
+.lang-row{display:flex;gap:.6rem;margin-top:1.5rem;}
+.ltag{
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);
+  border:1px solid rgba(0,240,200,.25);padding:.3rem .7rem;border-radius:2px;
+}
+
+/* ── SKILLS ── */
+#skills{}
+.skills-hex-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1.2rem;margin-top:3rem;
+}
+.hex-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:3px;padding:2rem;
+  transition:border-color .4s,transform .3s,box-shadow .4s;
+  position:relative;overflow:hidden;
+  cursor:default;
+}
+.hex-card::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:1px;
+  background:linear-gradient(to right,transparent,var(--cyan),transparent);
+  transition:left .6s ease;
+}
+.hex-card:hover::before{left:100%;}
+.hex-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0,rgba(0,240,200,.04),transparent 70%);
+  opacity:0;transition:opacity .4s;
+}
+.hex-card:hover::after{opacity:1;}
+.hex-card:hover{
+  border-color:rgba(0,240,200,.25);
+  box-shadow:0 0 30px rgba(0,240,200,.06);
+  transform:translateY(-4px);
+}
+.hex-num{
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  color:var(--cyan);opacity:.5;margin-bottom:1.2rem;letter-spacing:.2em;
+}
+.hex-icon{width:38px;height:38px;margin-bottom:1rem;color:var(--cyan);opacity:.7;}
+.hex-icon.purple{color:var(--purple);}
+.hex-icon.amber{color:var(--amber);}
+.hex-icon.blue{color:var(--blue);}
+.hex-title{
+  font-family:'Lato',monospace;font-size:.8rem;font-weight:700;
+  color:var(--text);letter-spacing:.06em;margin-bottom:.8rem;
+}
+.htags{display:flex;flex-wrap:wrap;gap:.4rem;}
+.htag{
+  font-family:'IBM Plex Mono',monospace;font-size:.55rem;
+  letter-spacing:.1em;color:var(--text2);
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:2px;padding:.25rem .55rem;
+  transition:all .25s;
+}
+.htag:hover{border-color:var(--border-hover,rgba(0,240,200,.25));color:var(--cyan);}
+
+/* ── PROJECTS ── */
+#projects{}
+.proj-grid{display:flex;flex-direction:column;gap:1rem;margin-top:3rem;}
+.pcard{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;
+  display:grid;grid-template-columns:80px 1fr auto;
+  transition:all .35s;position:relative;
+}
+.pcard:hover{border-color:rgba(0,240,200,.22);transform:translateX(6px);}
+.pcard-num-col{
+  padding:2rem 0;display:flex;align-items:flex-start;justify-content:center;
+  border-right:1px solid var(--border);
+  background:linear-gradient(to bottom,rgba(0,240,200,.03),transparent);
+}
+.pcard-num{
+  font-family:'Lato',monospace;font-size:1.4rem;font-weight:900;
+  color:rgba(0,240,200,.12);letter-spacing:-.02em;
+}
+.pcard-body{padding:2rem;}
+.pcard-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.8rem;}
+.pbadge{
+  font-family:'IBM Plex Mono',monospace;font-size:.52rem;
+  letter-spacing:.15em;text-transform:uppercase;
+  padding:.22rem .6rem;border-radius:2px;
+}
+.pb-cyan{color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,240,200,.15);}
+.pb-purple{color:var(--purple);background:var(--purple-dim);border:1px solid rgba(168,85,247,.2);}
+.pb-amber{color:var(--amber);background:var(--amber-dim);border:1px solid rgba(245,158,11,.2);}
+.pcard-title{
+  font-family:'Lato',monospace;font-size:1rem;font-weight:700;
+  color:var(--text);letter-spacing:.04em;margin-bottom:.6rem;
+}
+.pcard-desc{font-size:.82rem;color:var(--text2);line-height:1.75;margin-bottom:1rem;}
+.pcard-bullets{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.2rem;}
+.pbullet{
+  font-size:.75rem;color:var(--text2);line-height:1.6;
+  padding-left:1rem;position:relative;
+}
+.pbullet::before{
+  content:'>';position:absolute;left:0;
+  font-family:'IBM Plex Mono',monospace;color:var(--cyan);font-size:.65rem;
+}
+.pcard-link{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--cyan);text-decoration:none;
+  border:1px solid rgba(0,240,200,.25);padding:.45rem .9rem;
+  border-radius:2px;transition:all .3s;
+}
+.pcard-link:hover{background:var(--cyan);color:var(--void);}
+.pcard-viz{
+  width:180px;padding:1.5rem;
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  background:linear-gradient(135deg,rgba(0,240,200,.02),transparent);
+}
+.mini-chart{width:100%;flex:1;position:relative;}
+.mini-chart canvas{width:100%!important;}
+.pcard-tools{display:flex;flex-direction:column;gap:.35rem;width:100%;}
+.ptool{
+  font-family:'IBM Plex Mono',monospace;font-size:.52rem;
+  letter-spacing:.1em;text-align:center;
+  color:var(--muted);background:rgba(255,255,255,.03);
+  border:1px solid var(--border);padding:.25rem .4rem;border-radius:2px;
+}
+
+/* ── EDUCATION ── */
+#education{}
+.edu-timeline{margin-top:3rem;position:relative;}
+.edu-timeline::before{
+  content:'';position:absolute;left:16px;top:0;bottom:0;
+  width:1px;background:linear-gradient(to bottom,var(--cyan),rgba(0,240,200,.1));
+}
+.edu-item{
+  display:grid;grid-template-columns:48px 1fr;gap:1.5rem;
+  margin-bottom:2.5rem;position:relative;
+}
+.edu-node{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--cyan);background:var(--void);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;z-index:1;margin-top:.2rem;
+  box-shadow:0 0 14px rgba(0,240,200,.2);
+}
+.edu-node svg{width:12px;height:12px;color:var(--cyan);}
+.edu-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:3px;padding:1.8rem;
+  transition:border-color .4s;
+}
+.edu-card:hover{border-color:rgba(0,240,200,.2);}
+.edu-date{
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  color:var(--cyan);letter-spacing:.15em;margin-bottom:.6rem;
+  display:flex;align-items:center;gap:.7rem;
+}
+.edu-badge{
+  display:inline-block;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--cyan);background:var(--cyan-dim);
+  border:1px solid rgba(0,240,200,.2);border-radius:2px;padding:.2rem .5rem;
+}
+.edu-inprog{color:var(--amber);background:var(--amber-dim);border-color:rgba(245,158,11,.2);}
+.edu-degree{
+  font-family:'Lato',monospace;font-size:.9rem;font-weight:700;
+  color:var(--text);letter-spacing:.03em;margin-bottom:.3rem;
+}
+.edu-school{
+  font-family:'IBM Plex Mono',monospace;font-size:.68rem;
+  color:var(--cyan);letter-spacing:.06em;margin-bottom:.5rem;
+}
+.edu-note{font-size:.75rem;color:var(--muted);font-style:italic;margin-bottom:.7rem;}
+.edu-areas{
+  font-size:.75rem;color:var(--text2);line-height:1.8;
+  border-top:1px solid var(--border);padding-top:.8rem;margin-top:.5rem;
+}
+
+/* ── EXPERIENCE ── */
+#experience{}
+.exp-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:3px;padding:2.5rem;margin-top:3rem;
+  position:relative;overflow:hidden;transition:border-color .4s;
+}
+.exp-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(to bottom,var(--cyan),var(--purple));
+}
+.exp-card:hover{border-color:rgba(0,240,200,.2);}
+.exp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.6rem;}
+.exp-role{
+  font-family:'Lato',monospace;font-size:1.05rem;font-weight:700;
+  color:var(--text);letter-spacing:.04em;
+}
+.exp-co{
+  font-family:'IBM Plex Mono',monospace;font-size:.68rem;
+  color:var(--cyan);letter-spacing:.08em;margin-top:.3rem;
+}
+.exp-period{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  color:var(--muted);letter-spacing:.1em;white-space:nowrap;
+  border:1px solid var(--border);padding:.4rem .8rem;border-radius:2px;
+}
+.exp-bullets{display:flex;flex-direction:column;gap:.5rem;}
+.ebullet{
+  font-size:.82rem;color:var(--text2);line-height:1.7;
+  padding-left:1.2rem;position:relative;
+}
+.ebullet::before{
+  content:'▶';position:absolute;left:0;
+  color:var(--cyan);font-size:.5rem;top:.25em;
+}
+
+/* ── SOFT SKILLS ── */
+#softskills{}
+.soft-wrap{
+  display:flex;flex-wrap:wrap;gap:.7rem;margin-top:3rem;
+}
+.soft-tag{
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  letter-spacing:.08em;color:var(--text2);
+  border:1px solid var(--border);border-radius:2px;padding:.5rem 1rem;
+  transition:all .3s;background:var(--surface);
+}
+.soft-tag:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);}
+
+/* ── CONTACT ── */
+#contact{background:var(--deep);text-align:center;position:relative;overflow:hidden;}
+#contact::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0,rgba(0,240,200,.05),transparent 60%);
+}
+.contact-inner{position:relative;z-index:1;max-width:680px;margin:0 auto;}
+.contact-big{
+  font-family:'Lato',monospace;font-weight:900;
+  font-size:clamp(2.2rem,5.5vw,5.5rem);
+  line-height:.95;letter-spacing:.02em;color:var(--text);margin:2rem 0 .8rem;
+  text-shadow:0 0 60px rgba(0,240,200,.12);
+}
+.contact-big em{font-style:normal;color:var(--cyan);}
+.contact-sub{
+  font-size:.88rem;font-weight:300;color:var(--text2);
+  line-height:1.85;margin-bottom:2.5rem;max-width:480px;margin-left:auto;margin-right:auto;
+}
+.cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem;}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.65rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--void);background:var(--cyan);
+  padding:.9rem 2rem;border-radius:2px;text-decoration:none;cursor:none;
+  transition:opacity .3s,transform .2s;font-weight:400;
+  box-shadow:0 0 30px rgba(0,240,200,.2);
+}
+.btn-primary:hover{opacity:.85;transform:translateY(-2px);}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.65rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text);background:transparent;
+  border:1px solid var(--border);padding:.9rem 2rem;border-radius:2px;
+  text-decoration:none;cursor:none;transition:all .3s;
+}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px);}
+.contact-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+  background:var(--border);max-width:560px;margin:0 auto;
+}
+.cgrid-item{
+  background:var(--panel);padding:1.4rem;text-align:left;
+  text-decoration:none;transition:background .3s;
+}
+.cgrid-item:hover{background:var(--cyan-dim);}
+.cg-label{
+  font-family:'IBM Plex Mono',monospace;font-size:.52rem;
+  letter-spacing:.25em;text-transform:uppercase;color:var(--cyan);
+  margin-bottom:.35rem;
+}
+.cg-val{font-size:.82rem;color:var(--text);word-break:break-all;}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);padding:1.5rem 3.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  color:var(--muted);letter-spacing:.1em;
+}
+.foot-right{display:flex;gap:1.5rem;}
+.foot-right a{color:var(--muted);text-decoration:none;transition:color .3s;}
+.foot-right a:hover{color:var(--cyan);}
+
+/* ── Viz decorations ── */
+.scatter-bg{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.sdot{
+  position:absolute;border-radius:50%;
+  background:var(--cyan);opacity:.25;
+  animation:sdrift linear infinite;
+}
+@keyframes sdrift{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-8px) scale(1.1);}}
+
+/* ── Reveal ── */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,1,.3,1);}
+.rv.on{opacity:1;transform:none;}
+.rv-l{opacity:0;transform:translateX(-24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,1,.3,1);}
+.rv-l.on{opacity:1;transform:none;}
+
+/* ── Keyframes ── */
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+@keyframes slideUp{to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{to{opacity:1;}}
+@keyframes spinB{to{transform:translateY(-50%) rotate(360deg);}}
+
+/* ══════════════════════════════════════════════
+   PROJECT MODALS
+══════════════════════════════════════════════ */
+.proj-modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(2,4,8,0.0);
+  backdrop-filter:blur(0px);
+  pointer-events:none;
+  transition:background .4s ease,backdrop-filter .4s ease;
+}
+.proj-modal-overlay.open{
+  background:rgba(2,4,8,0.92);
+  backdrop-filter:blur(14px);
+  pointer-events:all;
+}
+.proj-modal{
+  position:fixed;left:0;right:0;bottom:0;
+  height:92vh;
+  background:var(--void);
+  border-top:1px solid var(--border);
+  border-radius:12px 12px 0 0;
+  transform:translateY(100%);
+  transition:transform .55s cubic-bezier(.22,1,.36,1);
+  z-index:501;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.proj-modal.open{transform:translateY(0);}
+
+/* Top bar */
+.modal-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 2.5rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(4,11,20,0.97);
+  flex-shrink:0;
+}
+.modal-breadcrumb{
+  display:flex;align-items:center;gap:.7rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.58rem;
+  letter-spacing:.2em;color:var(--muted);
+}
+.modal-breadcrumb .mb-sep{color:rgba(0,240,200,.15);}
+.modal-breadcrumb .mb-active{color:var(--cyan);}
+.modal-close-btn{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.56rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);background:transparent;
+  border:1px solid var(--border);padding:.45rem 1rem;
+  border-radius:2px;cursor:pointer;transition:all .3s;
+}
+.modal-close-btn:hover{color:var(--text);border-color:var(--cyan);}
+
+/* Scroll body */
+.modal-body{overflow-y:auto;flex:1;scroll-behavior:smooth;}
+.modal-body::-webkit-scrollbar{width:3px;}
+.modal-body::-webkit-scrollbar-track{background:transparent;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px;opacity:.5;}
+
+/* Hero band */
+.modal-hero{
+  padding:3.5rem 2.5rem 2.5rem;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(to bottom,rgba(0,240,200,0.04),transparent);
+  position:relative;overflow:hidden;
+}
+.modal-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,var(--cyan),transparent);
+}
+.modal-proj-num{
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  color:var(--cyan);opacity:.5;letter-spacing:.3em;margin-bottom:1rem;
+}
+.modal-badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.2rem;}
+.modal-title{
+  font-family:'Lato',monospace;
+  font-size:clamp(1.4rem,3vw,2.2rem);
+  font-weight:900;color:var(--text);letter-spacing:.03em;
+  margin-bottom:1rem;line-height:1.1;
+}
+.modal-tagline{
+  font-size:1rem;font-weight:300;color:var(--text2);
+  line-height:1.85;max-width:800px;
+  border-left:2px solid var(--cyan);padding-left:1.3rem;
+}
+
+/* Two-column layout */
+.modal-content{display:grid;grid-template-columns:1fr 310px;gap:0;}
+.modal-main{padding:2.5rem;border-right:1px solid var(--border);}
+.modal-sidebar{padding:2rem 1.8rem;}
+
+/* Sections */
+.modal-section{margin-bottom:2.8rem;}
+.modal-section:last-child{margin-bottom:0;}
+.msec-title{
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);
+  margin-bottom:1.2rem;display:flex;align-items:center;gap:.7rem;
+}
+.msec-title::before{content:'';width:16px;height:1px;background:var(--cyan);}
+.msec-body{font-size:.88rem;font-weight:300;line-height:1.95;color:var(--text2);}
+.msec-body p{margin-bottom:1rem;}
+.msec-body p:last-child{margin-bottom:0;}
+.msec-body strong{color:var(--text);font-weight:500;}
+.msec-body em{color:var(--cyan);font-style:normal;}
+
+/* Finding cards */
+.finding-list{display:flex;flex-direction:column;gap:.8rem;}
+.finding-item{
+  padding:1rem 1.2rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;border-left:2px solid var(--cyan);
+  font-size:.82rem;color:var(--text2);line-height:1.7;
+  transition:border-color .3s,background .3s;
+}
+.finding-item:hover{border-left-color:var(--purple);background:rgba(0,240,200,.04);}
+.finding-item strong{color:var(--cyan);font-weight:500;display:block;margin-bottom:.3rem;}
+
+/* Challenge items */
+.ci-list{display:flex;flex-direction:column;gap:.7rem;}
+.ci-item{display:flex;gap:.9rem;align-items:flex-start;font-size:.82rem;color:var(--text2);line-height:1.7;}
+.ci-bullet{
+  flex-shrink:0;width:22px;height:22px;border-radius:50%;
+  background:rgba(0,240,200,.08);border:1px solid rgba(0,240,200,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:.5rem;color:var(--cyan);
+  margin-top:.1rem;
+}
+
+/* Sidebar */
+.sidebar-widget{margin-bottom:1.8rem;padding-bottom:1.8rem;border-bottom:1px solid var(--border);}
+.sidebar-widget:last-child{border-bottom:none;margin-bottom:0;}
+.sw-title{
+  font-family:'IBM Plex Mono',monospace;font-size:.54rem;
+  letter-spacing:.25em;text-transform:uppercase;color:var(--cyan);margin-bottom:1rem;
+}
+.sw-tags{display:flex;flex-wrap:wrap;gap:.4rem;}
+.sw-tag{
+  font-family:'IBM Plex Mono',monospace;font-size:.54rem;
+  letter-spacing:.1em;color:var(--text2);
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:2px;padding:.26rem .55rem;transition:all .25s;
+}
+.sw-tag:hover{border-color:rgba(0,240,200,.3);color:var(--cyan);}
+.sw-stat{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.55rem 0;border-bottom:1px solid rgba(0,240,200,.05);
+}
+.sw-stat:last-child{border-bottom:none;}
+.sw-stat-key{font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.1em;}
+.sw-stat-val{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--cyan);}
+.sw-github-btn{
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--void);background:var(--cyan);
+  border:none;padding:.8rem;border-radius:2px;
+  text-decoration:none;cursor:pointer;width:100%;
+  transition:opacity .3s;margin-top:.5rem;
+}
+.sw-github-btn:hover{opacity:.82;}
+
+/* Read More button on card */
+.pcard-detail-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:'IBM Plex Mono',monospace;font-size:.56rem;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text2);background:var(--surface);
+  border:1px solid var(--border);padding:.45rem .9rem;
+  border-radius:2px;cursor:pointer;transition:all .3s;margin-left:.6rem;
+}
+.pcard-detail-btn:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim);}
+
+/* Responsive modal */
+@media(max-width:768px){
+  .modal-content{grid-template-columns:1fr;}
+  .modal-main{border-right:none;border-bottom:1px solid var(--border);padding:1.8rem 1.2rem;}
+  .modal-sidebar{padding:1.5rem 1.2rem;}
+  .modal-hero{padding:2rem 1.2rem 1.8rem;}
+  .modal-topbar{padding:1rem 1.2rem;}
+  .proj-modal{height:95vh;}
+}
+
+/* ── Responsive ── */
+@media(max-width:1100px){
+  #about{grid-template-columns:1fr;}
+  .id-card{position:static;}
+  .skills-hex-grid{grid-template-columns:1fr 1fr;}
+  .pcard{grid-template-columns:60px 1fr;}
+  .pcard-viz{display:none;}
+  .hero-formula{display:none;}
+  .hero-bottom{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  nav{padding:1.1rem 1.5rem;}
+  .nav-links,.nav-cta{display:none;}
+  .ham{display:flex;}
+  #hero,section{padding-left:1.5rem;padding-right:1.5rem;}
+  #hero{padding-top:5rem;padding-bottom:3rem;justify-content:flex-end;}
+  .skills-hex-grid{grid-template-columns:1fr;}
+  .pcard{grid-template-columns:1fr;}
+  .pcard-num-col{display:none;}
+  .contact-grid{grid-template-columns:1fr;}
+  footer{flex-direction:column;gap:1rem;text-align:center;}
+  .edu-timeline::before{left:14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Cursors -->
+<div id="cur-h"></div><div id="cur-v"></div>
+<div id="cur-dot"></div><div id="cur-ring"></div>
+
+<!-- Canvases -->
+<canvas id="grid-canvas"></canvas>
+<canvas id="neural-canvas"></canvas>
+<canvas id="entropy-canvas"></canvas>
+
+<!-- Mobile Nav -->
+<div class="mobnav" id="mobnav">
+  <span class="mob-x" id="mobx">&#10005;</span>
+  <a href="#about" onclick="closeMob()">About</a>
+  <a href="#skills" onclick="closeMob()">Skills</a>
+  <a href="#projects" onclick="closeMob()">Projects</a>
+  <a href="#education" onclick="closeMob()">Education</a>
+  <a href="#contact" onclick="closeMob()">Contact</a>
+</div>
+
+<div class="wrap">
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#">
+    <div class="logo-icon">CG</div>
+    CHARITH
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about" data-n="01">About</a></li>
+    <li><a href="#skills" data-n="02">Skills</a></li>
+    <li><a href="#projects" data-n="03">Projects</a></li>
+    <li><a href="#education" data-n="04">Education</a></li>
+    <li><a href="#experience" data-n="05">Experience</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">Hire Me</a>
+  <div class="ham" id="ham"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-readout">
+    <div class="readout-dot"></div>
+    <span>STATUS: AVAILABLE FOR OPPORTUNITIES</span>
+    <span style="color:var(--muted);">|</span>
+    <span>LOCATION: COLOMBO, SRI LANKA</span>
+  </div>
+  <h1 class="hero-name">
+    <span class="line"><span>CHARITH</span></span>
+    <span class="line"><span>GEETHAKA</span></span>
+  </h1>
+  <div class="hero-role">
+    Business Analyst<span class="sep">&#47;&#47;</span>Data Specialist<span class="sep">&#47;&#47;</span>ML Enthusiast
+  </div>
+  <div class="hero-bottom">
+    <p class="hero-desc">
+       Master of Business Analytics candidate at University of Colombo. Transforming raw data into
+      actionable intelligence using Power&nbsp;BI, Python, R and machine learning — bridging
+      the gap between business problems and data-driven solutions.
+    </p>
+    <div class="hero-metrics">
+      <div class="metric">
+        <span class="metric-key">model_accuracy</span>
+        <span class="metric-val">94.7%</span>
+        <div class="metric-bar"><div class="metric-fill" style="width:95%;background:var(--cyan);"></div></div>
+      </div>
+      <div class="metric">
+        <span class="metric-key">datasets_analysed</span>
+        <span class="metric-val">12,981+</span>
+        <div class="metric-bar"><div class="metric-fill" style="width:82%;background:var(--purple);"></div></div>
+      </div>
+      <div class="metric">
+        <span class="metric-key">projects_shipped</span>
+        <span class="metric-val">03</span>
+        <div class="metric-bar"><div class="metric-fill" style="width:60%;background:var(--amber);"></div></div>
+      </div>
+      <div class="metric">
+        <span class="metric-key">entropy[H(X)]</span>
+        <span class="metric-val">&#8722;&#931; p log p</span>
+        <div class="metric-bar"><div class="metric-fill" style="width:70%;background:var(--blue);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Formulas -->
+  <div class="hero-formula">
+    <div class="formula">
+      <span style="color:rgba(0,240,200,.3);">/* Shannon Entropy */</span><br/>
+      H(X) = <span class="hl">&#8722;&#931;</span> p(x) <span class="hl">log</span> p(x)
+    </div>
+    <div class="formula">
+      <span style="color:rgba(168,85,247,.3);">/* Gradient Descent */</span><br/>
+      &#952; := &#952; <span class="hl">&#8722;</span> &#945; <span class="hl">&#8711;</span>J(&#952;)
+    </div>
+    <div class="formula">
+      <span style="color:rgba(245,158,11,.3);">/* Sigmoid */</span><br/>
+      &#963;(z) = <span class="hl">1</span> / (1 + e<sup style="font-size:.5em;">&#8722;z</sup>)
+    </div>
+    <div class="formula">
+      <span style="color:rgba(56,189,248,.3);">/* R&#178; Score */</span><br/>
+      R&#178; = <span class="hl">1</span> &#8722; SS<sub style="font-size:.5em;">res</sub>/SS<sub style="font-size:.5em;">tot</sub>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="id-card rv-l">
+    <div class="id-card-header">
+      <div class="id-avatar">CG</div>
+      <div class="id-name">CHARITH GEETHAKA</div>
+      <div class="id-role">// Business Analyst &amp; Data Specialist</div>
+    </div>
+    <div class="id-body">
+      <div class="id-row">
+        <div class="id-key">email</div>
+        <div class="id-val"><a href="mailto:cgeethaka96@gmail.com">cgeethaka96@gmail.com</a></div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">phone</div>
+        <div class="id-val">+94 785 677 063</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">github</div>
+        <div class="id-val"><a href="https://github.com/CGeethaka" target="_blank">CGeethaka</a></div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">linkedin</div>
+        <div class="id-val"><a href="https://www.linkedin.com/in/charith-geethaka/" target="_blank">charith-geethaka</a></div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">web</div>
+        <div class="id-val"><a href="https://subtle-unicorn-fc448a.netlify.app" target="_blank">subtle-unicorn-fc448a</a></div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">location</div>
+        <div class="id-val">Dunagaha, Sri Lanka</div>
+      </div>
+      <div class="id-row">
+        <div class="id-key">lang</div>
+        <div class="id-val">
+          <div class="lang-row" style="margin:0;gap:.4rem;">
+            <span class="ltag">EN</span><span class="ltag">SI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="id-status">
+      <div class="status-dot"></div>
+      OPEN TO OPPORTUNITIES
+    </div>
+  </div>
+
+  <div class="about-content rv">
+    <div class="slabel"><span>00 &#47;&#47; PROFILE</span></div>
+    <h2 class="sh">About <em>Me</em></h2>
+    <div class="about-bio">
+      Enthusiastic Business Analyst with a strong foundation in <strong>data analytics, statistics and business intelligence</strong>. Currently pursuing a Master of Business Analytics at the University of Colombo School of Computing. Skilled in Power&nbsp;BI, Python, R, SQL and machine learning — passionate about turning data into actionable insights. Known for strong problem-solving, attention to detail and a continuous desire to learn in fast-paced, data-driven environments.
+    </div>
+
+    <div class="skill-bars">
+      <div class="sbar-title">// PROFICIENCY MATRIX</div>
+      <div class="sbar-item">
+        <div class="sbar-top"><span class="sbar-label">Power BI &amp; Data Visualisation</span><span class="sbar-pct">90%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-cyan" data-w="90"></div></div>
+      </div>
+      <div class="sbar-item">
+        <div class="sbar-top"><span class="sbar-label">Python (Pandas, Seaborn, Scikit-learn)</span><span class="sbar-pct">85%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-purple" data-w="85"></div></div>
+      </div>
+      <div class="sbar-item">
+        <div class="sbar-top"><span class="sbar-label">SQL &amp; Database Management</span><span class="sbar-pct">80%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-blue" data-w="80"></div></div>
+      </div>
+      <div class="sbar-item">
+        <div class="sbar-top"><span class="sbar-label">R Language &amp; Statistical Analysis</span><span class="sbar-pct">78%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-amber" data-w="78"></div></div>
+      </div>
+      <div class="sbar-item">
+        <div class="sbar-top"><span class="sbar-label">Machine Learning &amp; Predictive Modelling</span><span class="sbar-pct">70%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-cyan" data-w="70"></div></div>
+      </div>
+      <div class="sbar-item">
+        <div class="sbar-top"><span class="sbar-label">Excel &amp; Business Analytics</span><span class="sbar-pct">88%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-purple" data-w="88"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="rv">
+    <div class="slabel"><span>01 &#47;&#47; CAPABILITIES</span></div>
+    <h2 class="sh sh-purple">Tech <em>Stack</em></h2>
+  </div>
+  <div class="skills-hex-grid">
+
+    <div class="hex-card rv">
+      <div class="hex-num">[ 01 ]</div>
+      <svg class="hex-icon" viewBox="0 0 38 38" fill="none">
+        <rect x="2" y="6" width="34" height="26" rx="2" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M10 19h18M10 25h12M10 13h18" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="hex-title">VISUALISATION &amp; BI</div>
+      <div class="htags">
+        <span class="htag">Power BI</span><span class="htag">DAX</span>
+        <span class="htag">Excel Dashboards</span><span class="htag">KPI Cards</span>
+        <span class="htag">ggplot2</span><span class="htag">Seaborn</span>
+        <span class="htag">Matplotlib</span><span class="htag">Map Charts</span>
+      </div>
+    </div>
+
+    <div class="hex-card rv">
+      <div class="hex-num">[ 02 ]</div>
+      <svg class="hex-icon purple" viewBox="0 0 38 38" fill="none">
+        <path d="M12 8L6 19L12 30M26 8L32 19L26 30M20 6L18 32" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="hex-title">PROGRAMMING</div>
+      <div class="htags">
+        <span class="htag">Python</span><span class="htag">R Language</span>
+        <span class="htag">Pandas</span><span class="htag">NumPy</span>
+        <span class="htag">Scikit-learn</span><span class="htag">dplyr</span>
+        <span class="htag">ggplot2</span>
+      </div>
+    </div>
+
+    <div class="hex-card rv">
+      <div class="hex-num">[ 03 ]</div>
+      <svg class="hex-icon blue" viewBox="0 0 38 38" fill="none">
+        <ellipse cx="19" cy="12" rx="14" ry="5" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M5 12v14c0 2.76 6.27 5 14 5s14-2.24 14-5V12" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M5 19c0 2.76 6.27 5 14 5s14-2.24 14-5" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+      <div class="hex-title">DATA &amp; DATABASES</div>
+      <div class="htags">
+        <span class="htag">SQL</span><span class="htag">MySQL</span>
+        <span class="htag">Data Cleaning</span><span class="htag">ETL</span>
+        <span class="htag">Data Integration</span><span class="htag">Excel</span>
+      </div>
+    </div>
+
+    <div class="hex-card rv">
+      <div class="hex-num">[ 04 ]</div>
+      <svg class="hex-icon amber" viewBox="0 0 38 38" fill="none">
+        <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="28" cy="22" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="16" cy="28" r="3" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="30" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="8" cy="26" r="2" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M10 10L28 22M10 10L16 28M28 22L16 28" stroke="currentColor" stroke-width=".6" stroke-dasharray="2 2"/>
+      </svg>
+      <div class="hex-title">MACHINE LEARNING</div>
+      <div class="htags">
+        <span class="htag">Linear Regression</span><span class="htag">Classification</span>
+        <span class="htag">Clustering</span><span class="htag">Scikit-learn</span>
+        <span class="htag">Predictive Modelling</span><span class="htag">Correlation</span>
+      </div>
+    </div>
+
+    <div class="hex-card rv">
+      <div class="hex-num">[ 05 ]</div>
+      <svg class="hex-icon" viewBox="0 0 38 38" fill="none">
+        <path d="M5 29l7-14 5 8 5-10 4 8 6-8 5 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 6v23M5 6h28" stroke="currentColor" stroke-width=".8" stroke-linecap="round"/>
+      </svg>
+      <div class="hex-title">ANALYTICS STRATEGY</div>
+      <div class="htags">
+        <span class="htag">Business Stats</span><span class="htag">CRM Analytics</span>
+        <span class="htag">Marketing Analytics</span><span class="htag">KPI Measurement</span>
+        <span class="htag">Process Improvement</span>
+      </div>
+    </div>
+
+    <div class="hex-card rv">
+      <div class="hex-num">[ 06 ]</div>
+      <svg class="hex-icon purple" viewBox="0 0 38 38" fill="none">
+        <path d="M19 5L5 12v14l14 7 14-7V12L19 5Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M19 5v28M5 12l14 9 14-9" stroke="currentColor" stroke-width=".8"/>
+      </svg>
+      <div class="hex-title">PROJECT MANAGEMENT</div>
+      <div class="htags">
+        <span class="htag">Agile / Scrum</span><span class="htag">SDLC</span>
+        <span class="htag">Gantt Charts</span><span class="htag">PERT / WBS</span>
+        <span class="htag">Risk Management</span><span class="htag">PDLC</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="rv">
+    <div class="slabel"><span>02 &#47;&#47; PORTFOLIO</span></div>
+    <h2 class="sh sh-amber">Key <em>Projects</em></h2>
+  </div>
+  <div class="proj-grid">
+
+    <!-- P1 -->
+    <div class="pcard rv">
+      <div class="pcard-num-col"><div class="pcard-num">01</div></div>
+      <div class="pcard-body">
+        <div class="pcard-badges">
+          <span class="pbadge pb-cyan">Power BI</span>
+          <span class="pbadge pb-cyan">DAX</span>
+          <span class="pbadge pb-amber">Trade Analysis</span>
+          <span class="pbadge pb-purple">Data Viz</span>
+        </div>
+        <div class="pcard-title">U.S. Trade &amp; Tariff Impact Analysis</div>
+        <div class="pcard-desc">Interactive Power BI dashboard analysing economic effects of U.S. tariffs in 2024 — trade deficits, tariff responses and product-level price impacts across global markets.</div>
+        <div class="pcard-bullets">
+          <div class="pbullet">Integrated 3 datasets: country-level trade, time-series tariff &amp; product-level price data.</div>
+          <div class="pbullet">Built DAX measures: Net Trade, Deficit per Capita, Tariff Intensity %, Price Increase %.</div>
+          <div class="pbullet">Dynamic visuals: map charts, KPI cards, area charts, pie charts &amp; product impact tables.</div>
+          <div class="pbullet">Enhanced storytelling with slicers, tooltips &amp; custom formatting.</div>
+        </div>
+        <a class="pcard-link" href="https://github.com/CGeethaka/us-trade-tariff-impact-analysis" target="_blank">
+          View on GitHub
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8L8 2M8 2H4M8 2V6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </a>
+        <button class="pcard-detail-btn" onclick="openModal('modal1')">
+          Read More
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2v6M2 5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="pcard-viz">
+        <canvas id="chart1" width="140" height="100"></canvas>
+        <div class="pcard-tools">
+          <div class="ptool">Power BI</div><div class="ptool">DAX</div><div class="ptool">Excel</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="pcard rv">
+      <div class="pcard-num-col"><div class="pcard-num">02</div></div>
+      <div class="pcard-body">
+        <div class="pcard-badges">
+          <span class="pbadge pb-amber">R Language</span>
+          <span class="pbadge pb-purple">Statistics</span>
+          <span class="pbadge pb-cyan">Regression</span>
+        </div>
+        <div class="pcard-title">Housing Prices Inferential Analysis</div>
+        <div class="pcard-desc">Statistical analysis using R to explore and model factors influencing housing prices on the Boston Housing dataset — regression modelling from scratch.</div>
+        <div class="pcard-bullets">
+          <div class="pbullet">Descriptive &amp; inferential statistical analysis using R language.</div>
+          <div class="pbullet">Built simple and multiple linear regression models to predict median house prices.</div>
+          <div class="pbullet">Correlation analysis with statistical significance interpretation.</div>
+          <div class="pbullet">ggplot2 visualisations: histograms, scatter plots, boxplots &amp; diagnostic plots.</div>
+        </div>
+        <a class="pcard-link" href="https://github.com/CGeethaka/Housing-Prices-Inferential-Analysis-R/tree/main" target="_blank">
+          View on GitHub
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8L8 2M8 2H4M8 2V6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </a>
+        <button class="pcard-detail-btn" onclick="openModal('modal2')">
+          Read More
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2v6M2 5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="pcard-viz">
+        <canvas id="chart2" width="140" height="100"></canvas>
+        <div class="pcard-tools">
+          <div class="ptool">R</div><div class="ptool">ggplot2</div><div class="ptool">Stats</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P3 -->
+    <div class="pcard rv">
+      <div class="pcard-num-col"><div class="pcard-num">03</div></div>
+      <div class="pcard-body">
+        <div class="pcard-badges">
+          <span class="pbadge pb-purple">Python</span>
+          <span class="pbadge pb-cyan">EDA</span>
+          <span class="pbadge pb-amber">Data Visualisation</span>
+        </div>
+        <div class="pcard-title">Airline Passenger Satisfaction Analysis</div>
+        <div class="pcard-desc">Full EDA on 12,981 airline passenger records using Python to surface patterns and insights that affect satisfaction — supporting data-driven airline decisions.</div>
+        <div class="pcard-bullets">
+          <div class="pbullet">Analysed 12,981 records using Python, Pandas &amp; Seaborn.</div>
+          <div class="pbullet">Satisfaction trends by gender, age, flight distance, delays &amp; customer type.</div>
+          <div class="pbullet">Interpreted key patterns to generate actionable, data-driven insights.</div>
+        </div>
+        <a class="pcard-link" href="https://github.com/CGeethaka/Airline-Passenger-Satisfaction" target="_blank">
+          View on GitHub
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8L8 2M8 2H4M8 2V6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </a>
+        <button class="pcard-detail-btn" onclick="openModal('modal3')">
+          Read More
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2v6M2 5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="pcard-viz">
+        <canvas id="chart3" width="140" height="100"></canvas>
+        <div class="pcard-tools">
+          <div class="ptool">Python</div><div class="ptool">Pandas</div><div class="ptool">Seaborn</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="rv">
+    <div class="slabel"><span>03 &#47;&#47; ACADEMIA</span></div>
+    <h2 class="sh">Education &amp; <em>Training</em></h2>
+  </div>
+  <div class="edu-timeline">
+
+    <div class="edu-item rv">
+      <div class="edu-node">
+        <svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4" fill="var(--cyan)" opacity=".5"/><circle cx="6" cy="6" r="2" fill="var(--cyan)"/></svg>
+      </div>
+      <div class="edu-card">
+        <div class="edu-date">Mar 2025 &#8212; Mar 2027 <span class="edu-badge edu-inprog">&#9679; In Progress</span></div>
+        <div class="edu-degree">Master of Business Analytics</div>
+        <div class="edu-school">University of Colombo School of Computing (UCSC)</div>
+        <div class="edu-areas">Business Statistics &amp; Statistical Inference &nbsp;&#183;&nbsp; Data Programming &amp; Organisational Data Management &nbsp;&#183;&nbsp; Machine Learning &amp; Pattern Recognition &nbsp;&#183;&nbsp; Data Visualisation &amp; Warehousing &nbsp;&#183;&nbsp; Predictive Analytics &amp; Modelling &nbsp;&#183;&nbsp; Big Data Analytics &amp; Process Improvement &nbsp;&#183;&nbsp; Ethics &amp; Legal Frameworks</div>
+      </div>
+    </div>
+
+    <div class="edu-item rv">
+      <div class="edu-node">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="2" y="2" width="8" height="8" rx="1" stroke="var(--cyan)" stroke-width="1.2"/></svg>
+      </div>
+      <div class="edu-card">
+        <div class="edu-date">Feb 2023 &#8212; Aug 2024 <span class="edu-badge">Completed</span></div>
+        <div class="edu-degree">BEng (Hons) Software Engineering</div>
+        <div class="edu-school">London Metropolitan University</div>
+        <div class="edu-note">Lower Second Class Honours</div>
+        <div class="edu-areas">Advanced Software Engineering &nbsp;&#183;&nbsp; Application Development &nbsp;&#183;&nbsp; Project Analysis &amp; Practice &nbsp;&#183;&nbsp; Artificial Intelligence</div>
+      </div>
+    </div>
+
+    <div class="edu-item rv">
+      <div class="edu-node">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="2" y="2" width="8" height="8" rx="1" stroke="var(--cyan)" stroke-width="1.2"/></svg>
+      </div>
+      <div class="edu-card">
+        <div class="edu-date">Oct 2019 &#8212; Aug 2021 <span class="edu-badge">Completed</span></div>
+        <div class="edu-degree">BTEC HND in Software Engineering</div>
+        <div class="edu-school">Pearson / ESOFT Metro Campus</div>
+        <div class="edu-areas">Software Development &nbsp;&#183;&nbsp; Databases &nbsp;&#183;&nbsp; Networking &nbsp;&#183;&nbsp; Business Intelligence &nbsp;&#183;&nbsp; Programming &nbsp;&#183;&nbsp; Web Design</div>
+      </div>
+    </div>
+
+    <div class="edu-item rv">
+      <div class="edu-node">
+        <svg viewBox="0 0 12 12" fill="none"><polygon points="6,2 10,10 2,10" stroke="var(--cyan)" stroke-width="1.2" fill="none"/></svg>
+      </div>
+      <div class="edu-card">
+        <div class="edu-date">Aug 2018 <span class="edu-badge">Completed</span></div>
+        <div class="edu-degree">G.C.E. Advanced Level</div>
+        <div class="edu-school">Nalanda Central College (Boys), Minuwangoda</div>
+        <div class="edu-note">Biological Science &nbsp;&#183;&nbsp; Index: 1595768</div>
+        <div class="edu-areas">Biology — C &nbsp;&#183;&nbsp; Physics — S &nbsp;&#183;&nbsp; Chemistry — S</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="rv">
+    <div class="slabel"><span>04 &#47;&#47; CAREER</span></div>
+    <h2 class="sh">Work <em>Experience</em></h2>
+  </div>
+  <div class="exp-card rv">
+    <div class="exp-top">
+      <div>
+        <div class="exp-role">LAB ASSISTANT</div>
+        <div class="exp-co">Packages Lanka Pvt Ltd &mdash; Ja-Ela, Ekala, Sri Lanka</div>
+      </div>
+      <div class="exp-period">Dec 2021 &mdash; Nov 2024</div>
+    </div>
+    <div class="exp-bullets">
+      <div class="ebullet">Performed routine laboratory testing to ensure product quality and compliance with standard operating procedures.</div>
+      <div class="ebullet">Collected, recorded and organised testing data for packaging materials across multiple material combinations.</div>
+      <div class="ebullet">Monitored product quality, identified anomalies and communicated findings via detailed reports for corrective actions.</div>
+      <div class="ebullet">Created Excel-based summaries to track testing trends and support data-driven decision-making.</div>
+      <div class="ebullet">Collaborated with production and quality teams to ensure data accuracy, streamline workflows and maintain compliance standards.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOFT SKILLS -->
+<section id="softskills">
+  <div class="rv">
+    <div class="slabel"><span>05 &#47;&#47; ATTRIBUTES</span></div>
+    <h2 class="sh sh-purple">Soft <em>Skills</em></h2>
+  </div>
+  <div class="soft-wrap rv">
+    <span class="soft-tag">Attention to Detail</span>
+    <span class="soft-tag">Analytical Thinking</span>
+    <span class="soft-tag">Problem Solving</span>
+    <span class="soft-tag">Critical Thinking</span>
+    <span class="soft-tag">Teamwork &amp; Collaboration</span>
+    <span class="soft-tag">Independent Work</span>
+    <span class="soft-tag">Leadership</span>
+    <span class="soft-tag">Effective Communication</span>
+    <span class="soft-tag">Technical Presentation</span>
+    <span class="soft-tag">Non-Technical Presentation</span>
+    <span class="soft-tag">Time Management</span>
+    <span class="soft-tag">Multitasking</span>
+    <span class="soft-tag">Continuous Learning</span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner rv">
+    <div class="slabel" style="justify-content:center;"><span>06 &#47;&#47; CONNECT</span></div>
+    <h2 class="contact-big">LET'S BUILD<br/><em>SOMETHING</em></h2>
+    <p class="contact-sub">
+      Actively seeking Business Analyst, Data Analyst and BI roles. Whether it's a project, a position or a collaboration — let's talk data.
+    </p>
+    <div class="cta-row">
+      <a class="btn-primary" href="mailto:cgeethaka96@gmail.com">
+        Send Email
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </a>
+      <a class="btn-secondary" href="https://www.linkedin.com/in/charith-geethaka/" target="_blank">LinkedIn Profile</a>
+      <a class="btn-secondary" href="https://github.com/CGeethaka" target="_blank">GitHub</a>
+    </div>
+    <div class="contact-grid">
+      <a class="cgrid-item" href="mailto:cgeethaka96@gmail.com">
+        <div class="cg-label">Email</div>
+        <div class="cg-val">cgeethaka96@gmail.com</div>
+      </a>
+      <a class="cgrid-item" href="tel:+94785677063">
+        <div class="cg-label">Phone</div>
+        <div class="cg-val">+94 785 677 063</div>
+      </a>
+      <a class="cgrid-item" href="https://github.com/CGeethaka" target="_blank">
+        <div class="cg-label">GitHub</div>
+        <div class="cg-val">github.com/CGeethaka</div>
+      </a>
+      <a class="cgrid-item" href="https://subtle-unicorn-fc448a.netlify.app" target="_blank">
+        <div class="cg-label">Portfolio</div>
+        <div class="cg-val">subtle-unicorn-fc448a.netlify.app</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>&#169; 2025 CHARITH GEETHAKA &mdash; ALL RIGHTS RESERVED</span>
+  <div class="foot-right">
+    <a href="https://github.com/CGeethaka" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/charith-geethaka/" target="_blank">LinkedIn</a>
+    <a href="https://subtle-unicorn-fc448a.netlify.app" target="_blank">Portfolio</a>
+    <a href="mailto:cgeethaka96@gmail.com">Email</a>
+  </div>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+// ══════════════════════════════════════════════
+// CURSOR
+// ══════════════════════════════════════════════
+const curH=document.getElementById('cur-h');
+const curV=document.getElementById('cur-v');
+const curDot=document.getElementById('cur-dot');
+const curRing=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+document.querySelectorAll('a,button,.hex-card,.pcard,.soft-tag,.edu-card,.exp-card,.metric').forEach(el=>{
+  el.addEventListener('mouseenter',()=>curRing.classList.add('h'));
+  el.addEventListener('mouseleave',()=>curRing.classList.remove('h'));
+});
+(function animCur(){
+  curH.style.left=mx+'px'; curH.style.top=my+'px';
+  curV.style.left=mx+'px'; curV.style.top=my+'px';
+  curDot.style.left=mx+'px'; curDot.style.top=my+'px';
+  rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
+  curRing.style.left=rx+'px'; curRing.style.top=ry+'px';
+  requestAnimationFrame(animCur);
+})();
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('sc',scrollY>60));
+document.getElementById('ham').addEventListener('click',()=>document.getElementById('mobnav').classList.add('open'));
+document.getElementById('mobx').addEventListener('click',closeMob);
+function closeMob(){document.getElementById('mobnav').classList.remove('open');}
+
+// ══════════════════════════════════════════════
+// GRID CANVAS — coordinate axis background
+// ══════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('grid-canvas');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    const step=60;
+    ctx.strokeStyle='rgba(0,240,200,0.04)';ctx.lineWidth=.5;
+    for(let x=0;x<c.width;x+=step){
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();
+    }
+    for(let y=0;y<c.height;y+=step){
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();
+    }
+    // Axis lines
+    ctx.strokeStyle='rgba(0,240,200,0.09)';ctx.lineWidth=1;
+    ctx.setLineDash([4,8]);
+    const cx=c.width*.5,cy=c.height*.5;
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,c.height);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(c.width,cy);ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  draw();window.addEventListener('resize',draw);
+})();
+
+// ══════════════════════════════════════════════
+// NEURAL NETWORK CANVAS
+// ══════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('neural-canvas');
+  const ctx=c.getContext('2d');
+  let W,H;
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}
+  resize();window.addEventListener('resize',()=>{resize();buildNet();});
+
+  // Network architecture
+  const layers=[3,5,6,5,3];
+  let nodes=[];
+  let signals=[];
+
+  function buildNet(){
+    nodes=[];
+    const lx=W*.15,rx=W*.85;
+    layers.forEach((n,li)=>{
+      const x=lx+(rx-lx)*(li/(layers.length-1));
+      const totalH=n*60;
+      const startY=(H-totalH)/2;
+      for(let ni=0;ni<n;ni++){
+        nodes.push({
+          x,y:startY+ni*60+30,
+          layer:li,idx:ni,
+          pulse:Math.random()*Math.PI*2,
+          pulseSpeed:.02+Math.random()*.01
+        });
+      }
+    });
+  }
+  buildNet();
+
+  function getLayerNodes(l){return nodes.filter(n=>n.layer===l);}
+
+  function spawnSignal(){
+    const l=Math.floor(Math.random()*(layers.length-1));
+    const fromNodes=getLayerNodes(l);
+    const toNodes=getLayerNodes(l+1);
+    if(!fromNodes.length||!toNodes.length)return;
+    const from=fromNodes[Math.floor(Math.random()*fromNodes.length)];
+    const to=toNodes[Math.floor(Math.random()*toNodes.length)];
+    signals.push({from,to,t:0,speed:.015+Math.random()*.01,
+      color:Math.random()>.5?'#00f0c8':'#a855f7'});
+  }
+
+  let t=0,mouse={x:-1000,y:-1000};
+  document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    t++;
+
+    // Draw edges
+    for(let l=0;l<layers.length-1;l++){
+      const fromNodes=getLayerNodes(l);
+      const toNodes=getLayerNodes(l+1);
+      fromNodes.forEach(fn=>{
+        toNodes.forEach(tn=>{
+          const d=Math.hypot(fn.x-mouse.x,fn.y-mouse.y);
+          const alpha=d<200?0.12:0.04;
+          ctx.strokeStyle=`rgba(0,240,200,${alpha})`;
+          ctx.lineWidth=.5;
+          ctx.beginPath();ctx.moveTo(fn.x,fn.y);ctx.lineTo(tn.x,tn.y);ctx.stroke();
+        });
+      });
+    }
+
+    // Draw nodes
+    nodes.forEach(n=>{
+      n.pulse+=n.pulseSpeed;
+      const d=Math.hypot(n.x-mouse.x,n.y-mouse.y);
+      const near=d<180;
+      const r=near?6:4;
+      const glow=near?0.9:0.3+Math.sin(n.pulse)*.15;
+
+      const grad=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*4);
+      grad.addColorStop(0,`rgba(0,240,200,${glow})`);
+      grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;ctx.beginPath();ctx.arc(n.x,n.y,r*4,0,Math.PI*2);ctx.fill();
+
+      ctx.fillStyle=`rgba(0,240,200,${glow})`;
+      ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=`rgba(0,240,200,${glow*.5})`;
+      ctx.lineWidth=1;ctx.beginPath();ctx.arc(n.x,n.y,r+3,0,Math.PI*2);ctx.stroke();
+    });
+
+    // Signals
+    if(t%30===0)spawnSignal();
+    signals=signals.filter(s=>{
+      s.t+=s.speed;
+      if(s.t>1)return false;
+      const x=s.from.x+(s.to.x-s.from.x)*s.t;
+      const y=s.from.y+(s.to.y-s.from.y)*s.t;
+      const g=ctx.createRadialGradient(x,y,0,x,y,8);
+      g.addColorStop(0,s.color);g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();
+      return true;
+    });
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ══════════════════════════════════════════════
+// ENTROPY CANVAS — particles organizing/scattering
+// ══════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('entropy-canvas');
+  const ctx=c.getContext('2d');
+  let W,H;
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const NUM=60;
+  const pts=[];
+  let phase=0,phaseT=0;
+
+  // Target positions — a scatter plot shape
+  function targetPos(i){
+    const angle=(i/NUM)*Math.PI*2;
+    const r=80+Math.sin(angle*3)*30;
+    return{
+      x:W*.5+Math.cos(angle)*r,
+      y:H*.5+Math.sin(angle)*r
+    };
+  }
+
+  for(let i=0;i<NUM;i++){
+    pts.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,
+      r:Math.random()*1.5+.5,
+      col:Math.random()>.65?'rgba(0,240,200,':'rgba(168,85,247,',
+      targetX:0,targetY:0
+    });
+  }
+
+  let t=0;
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    phaseT+=0.004;
+    const organise=Math.sin(phaseT)>.3;
+    const blend=Math.max(0,Math.min(1,(Math.sin(phaseT)-.3)/.7));
+
+    pts.forEach((p,i)=>{
+      const tgt=targetPos(i);
+      if(organise){
+        p.x+=(tgt.x-p.x)*0.04;p.y+=(tgt.y-p.y)*0.04;
+      } else {
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      }
+      const alpha=.15+blend*.15;
+      ctx.fillStyle=p.col+alpha+')';
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+    });
+
+    // Draw connecting lines between close organised particles
+    if(blend>.3){
+      ctx.strokeStyle=`rgba(0,240,200,${blend*.08})`;ctx.lineWidth=.5;
+      for(let i=0;i<pts.length;i++){
+        for(let j=i+1;j<pts.length;j++){
+          const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+          if(d<70){
+            ctx.globalAlpha=(1-d/70)*blend*.4;
+            ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha=1;
+    }
+
+    t++;requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ══════════════════════════════════════════════
+// MINI CHARTS for project cards
+// ══════════════════════════════════════════════
+function drawBarChart(id,data,color){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const barW=(W-10)/data.length-3;
+  data.forEach((v,i)=>{
+    const bh=v*(H-10);
+    const x=5+i*(barW+3);
+    const y=H-5-bh;
+    const g=ctx.createLinearGradient(0,y,0,H-5);
+    g.addColorStop(0,color);g.addColorStop(1,color.replace('1)','0.2)'));
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.roundRect(x,y,barW,bh,1);ctx.fill();
+  });
+}
+
+function drawLineChart(id,data,color){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const step=(W-10)/(data.length-1);
+  // Area fill
+  ctx.beginPath();ctx.moveTo(5,H-5-data[0]*(H-10));
+  data.forEach((v,i)=>{if(i>0)ctx.lineTo(5+i*step,H-5-v*(H-10));});
+  ctx.lineTo(5+(data.length-1)*step,H-5);ctx.lineTo(5,H-5);ctx.closePath();
+  ctx.fillStyle=color.replace('1)','0.15)');ctx.fill();
+  // Line
+  ctx.beginPath();ctx.moveTo(5,H-5-data[0]*(H-10));
+  data.forEach((v,i)=>{if(i>0)ctx.lineTo(5+i*step,H-5-v*(H-10));});
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+  // Dots
+  data.forEach((v,i)=>{
+    ctx.fillStyle=color;ctx.beginPath();ctx.arc(5+i*step,H-5-v*(H-10),2.5,0,Math.PI*2);ctx.fill();
+  });
+}
+
+function drawScatter(id,pts,color){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(([px,py])=>{
+    const x=px*(W-10)+5,y=(1-py)*(H-10)+5;
+    ctx.fillStyle=color;ctx.globalAlpha=.7;
+    ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+}
+
+drawBarChart('chart1',[.4,.7,.55,.85,.6,.9,.5,.75],'rgba(0,240,200,1)');
+drawLineChart('chart2',[.3,.45,.4,.6,.55,.7,.65,.8],'rgba(245,158,11,1)');
+const scatterData=Array.from({length:22},()=>[Math.random(),Math.random()*.7+Math.random()*.3]);
+drawScatter('chart3',scatterData,'rgba(168,85,247,1)');
+
+// ══════════════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════════════
+const rvObs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('on'),i*85);});
+},{threshold:.08});
+document.querySelectorAll('.rv,.rv-l').forEach(el=>rvObs.observe(el));
+
+// Skill bars
+const barObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.currentTarget.querySelectorAll('.sbar-fill').forEach(f=>{f.style.width=f.dataset.w+'%';});
+      barObs.unobserve(e.currentTarget);
+    }
+  });
+},{threshold:.15});
+document.querySelectorAll('#about').forEach(s=>barObs.observe(s));
+
+// ══════════════════════════════════════════════
+// FLOATING MATH FORMULAS
+// ══════════════════════════════════════════════
+const formulas=[
+  'H(X) = -Σ p(x) log p(x)',
+  '∂L/∂w = -2Σ(yᵢ - ŷᵢ)xᵢ',
+  'σ(z) = 1/(1+e⁻ᶻ)',
+  'argmax P(y|x)',
+  'R² = 1 - SSres/SStot',
+  'Var(X) = E[X²] - (E[X])²',
+  'KL(P||Q) = Σ P log(P/Q)',
+  'P(A|B) = P(B|A)P(A)/P(B)',
+  'MSE = (1/n)Σ(yᵢ-ŷᵢ)²',
+  '∇J(θ) = (1/m)Xᵀ(Xθ-y)',
+];
+
+function spawnFormula(){
+  const el=document.createElement('div');
+  el.className='math-floater';
+  el.textContent=formulas[Math.floor(Math.random()*formulas.length)];
+  el.style.left=Math.random()*90+'%';
+  el.style.bottom='-2rem';
+  const dur=18+Math.random()*14;
+  el.style.animationDuration=dur+'s';
+  el.style.animationDelay='0s';
+  el.style.fontSize=(.55+Math.random()*.15)+'rem';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),(dur+1)*1000);
+}
+setInterval(spawnFormula,2800);
+setTimeout(spawnFormula,300);
+setTimeout(spawnFormula,1200);
+</script>
+<!-- ══════════════════════════════════════════
+     SHARED OVERLAY
+══════════════════════════════════════════ -->
+<div class="proj-modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+
+<!-- ══ MODAL 1 — U.S. Trade & Tariff ══ -->
+<div class="proj-modal" id="modal1">
+  <div class="modal-topbar">
+    <div class="modal-breadcrumb">
+      <span>PROJECTS</span><span class="mb-sep"> / </span>
+      <span class="mb-active">U.S. TRADE &amp; TARIFF IMPACT ANALYSIS</span>
+    </div>
+    <button class="modal-close-btn" onclick="closeModal()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      ESC / Close
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-hero">
+      <div class="modal-proj-num">// PROJECT_01.pbix</div>
+      <div class="modal-badges">
+        <span class="pbadge pb-cyan">Power BI</span>
+        <span class="pbadge pb-cyan">DAX</span>
+        <span class="pbadge pb-amber">Trade Analysis</span>
+        <span class="pbadge pb-purple">Data Visualisation</span>
+      </div>
+      <h2 class="modal-title">U.S. Trade &amp; Tariff Impact Analysis Dashboard</h2>
+      <p class="modal-tagline">An end-to-end Power BI solution that transforms three complex economic datasets into a single decision-ready dashboard — revealing how U.S. tariff policies in 2024 rippled through global trade balances, commodity prices and bilateral trade relationships.</p>
+    </div>
+    <div class="modal-content">
+      <div class="modal-main">
+        <div class="modal-section">
+          <div class="msec-title">Project Overview</div>
+          <div class="msec-body">
+            <p>The U.S.-China trade war and subsequent rounds of tariff escalation from 2018 to 2024 created one of the most complex economic policy environments in modern history. This project was born out of a genuine desire to understand — through data — how those tariffs translated into real-world economic consequences: did trade deficits widen? Did domestic prices rise as economists predicted? Which product categories were most affected?</p>
+            <p>The answer required pulling together three entirely separate data sources, harmonising them on a common schema, and building a dashboard that allows any analyst or policymaker to slice through the complexity and find the signal in the noise. The result is a fully interactive Power BI report integrating <strong>country-level bilateral trade flows</strong>, <strong>time-series tariff rate schedules</strong>, and <strong>product-level consumer price index data</strong> — all connected by a custom DAX data model built from the ground up.</p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Problem Statement</div>
+          <div class="msec-body">
+            <p>Trade policy analysts and business intelligence teams faced a fragmented data landscape. Tariff schedules were stored in one format, bilateral trade statistics in another, and price impact data in a third — with no common key or consistent granularity between them. Existing public dashboards on trade were either too high-level to be actionable, or too technically demanding for non-economists to navigate.</p>
+            <p>The core challenge this project addressed: <em>How can we translate raw policy data — tariff rates, trade volumes, price indices — into visual intelligence that non-technical stakeholders can act on immediately?</em></p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Methodology &amp; Technical Approach</div>
+          <div class="msec-body">
+            <p><strong>Data Acquisition &amp; Integration:</strong> Three datasets were sourced and merged using Power Query. Country-level trade data provided import/export volumes by bilateral pair. Time-series tariff data captured the evolving rate schedules across product categories. Product-level price data tracked consumer-facing price changes. Significant cleaning was required — handling missing values, normalising country codes across schemas, and aligning date granularities from annual to quarterly.</p>
+            <p><strong>DAX Measure Development:</strong> A suite of custom DAX measures was built. <em>Net Trade Balance</em> calculated the difference between exports and imports at both country and product-category level. <em>Deficit per Capita</em> normalised trade deficit figures against population data. <em>Tariff Intensity %</em> expressed the weighted average tariff burden on a bilateral relationship. <em>Price Increase %</em> computed year-over-year change in consumer prices and correlated it with tariff rate changes.</p>
+            <p><strong>Visualisation Design:</strong> The dashboard was designed around three analytical lenses — geographic (map chart showing bilateral trade flows), temporal (area charts showing trade balance and tariff rates over time), and product-level (matrix table showing which categories experienced the greatest price impacts). All visuals are cross-filtered, meaning selecting a country on the map automatically updates the time series and product tables.</p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Key Findings</div>
+          <div class="finding-list">
+            <div class="finding-item"><strong>Trade Deficit Widened — Not Narrowed</strong>Despite the stated policy objective of reducing the U.S. trade deficit, bilateral deficits with several major trading partners actually widened between 2022 and 2024, as importers shifted sourcing to third countries rather than reducing import volumes.</div>
+            <div class="finding-item"><strong>Consumer Price Pass-Through Was Significant</strong>Product categories with tariff increases above 15% showed an average consumer price increase of 8–12% within two quarters, confirming tariff costs were being partially passed through to end consumers rather than absorbed by manufacturers.</div>
+            <div class="finding-item"><strong>Electronics &amp; Steel Were Most Impacted</strong>Consumer electronics and steel/aluminium products showed the highest Tariff Intensity % scores, and also corresponded with the greatest Price Increase % in the product-level analysis — making them the clearest casualties of the tariff escalation.</div>
+            <div class="finding-item"><strong>Emerging Markets Benefited from Trade Diversion</strong>Countries like Vietnam, Mexico and India showed significant increases in export volumes to the U.S. during the same period, suggesting trade diversion effects were substantial — a nuanced finding not visible in high-level headline data.</div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Challenges &amp; Solutions</div>
+          <div class="ci-list">
+            <div class="ci-item"><div class="ci-bullet">01</div><div>Harmonising three datasets with different country-coding conventions (ISO2, ISO3, and free-text) required building a custom lookup table in Power Query to resolve all naming conflicts before the data model could be established.</div></div>
+            <div class="ci-item"><div class="ci-bullet">02</div><div>DAX time intelligence functions required careful handling of the fiscal calendar vs. calendar year distinction in the tariff schedule data. A custom date table was created to resolve this and ensure accurate year-over-year comparisons.</div></div>
+            <div class="ci-item"><div class="ci-bullet">03</div><div>The product-level price data used CPI category codes while the tariff schedule used HTS codes. A manual crosswalk mapping was built to enable joining these two datasets in a meaningful and statistically sound way.</div></div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Outcome &amp; Learnings</div>
+          <div class="msec-body">
+            <p>This project significantly deepened my understanding of building production-grade data models in Power BI — moving beyond simple drag-and-drop visualisations into genuine analytical engineering. The challenge of integrating mismatched datasets is one of the most common real-world problems a Business Analyst faces, and this project gave me extensive hands-on experience with it.</p>
+            <p>I also developed a strong appreciation for <strong>data storytelling</strong> — the dashboard was designed so that a non-economist could open it and within 30 seconds understand the core narrative: tariffs changed prices, reshaped trade flows, and created winners and losers across different parts of the global economy.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-sidebar">
+        <div class="sidebar-widget">
+          <div class="sw-title">// Tech Stack</div>
+          <div class="sw-tags">
+            <span class="sw-tag">Power BI</span><span class="sw-tag">DAX</span>
+            <span class="sw-tag">Power Query</span><span class="sw-tag">Excel</span>
+            <span class="sw-tag">M Language</span>
+          </div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Project Stats</div>
+          <div class="sw-stat"><span class="sw-stat-key">datasets</span><span class="sw-stat-val">3 integrated</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">dax_measures</span><span class="sw-stat-val">12+ custom</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">visual_types</span><span class="sw-stat-val">8 chart types</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">domain</span><span class="sw-stat-val">Trade Economics</span></div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Skills Demonstrated</div>
+          <div class="sw-tags">
+            <span class="sw-tag">Data Modelling</span><span class="sw-tag">ETL</span>
+            <span class="sw-tag">Dashboard Design</span><span class="sw-tag">Data Storytelling</span>
+            <span class="sw-tag">Cross-filtering</span>
+          </div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Repository</div>
+          <a class="sw-github-btn" href="https://github.com/CGeethaka/us-trade-tariff-impact-analysis" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL 2 — Housing Prices ══ -->
+<div class="proj-modal" id="modal2">
+  <div class="modal-topbar">
+    <div class="modal-breadcrumb">
+      <span>PROJECTS</span><span class="mb-sep"> / </span>
+      <span class="mb-active">HOUSING PRICES INFERENTIAL ANALYSIS</span>
+    </div>
+    <button class="modal-close-btn" onclick="closeModal()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      ESC / Close
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-hero">
+      <div class="modal-proj-num">// PROJECT_02.R</div>
+      <div class="modal-badges">
+        <span class="pbadge pb-amber">R Language</span>
+        <span class="pbadge pb-purple">Statistics</span>
+        <span class="pbadge pb-cyan">Regression</span>
+        <span class="pbadge pb-cyan">ggplot2</span>
+      </div>
+      <h2 class="modal-title">Housing Prices Inferential Analysis</h2>
+      <p class="modal-tagline">A rigorous statistical investigation into what drives housing prices — using the classic Boston Housing dataset as the testing ground for building, evaluating and interpreting simple and multiple linear regression models entirely in R.</p>
+    </div>
+    <div class="modal-content">
+      <div class="modal-main">
+        <div class="modal-section">
+          <div class="msec-title">Project Overview</div>
+          <div class="msec-body">
+            <p>Housing prices are one of the most economically significant and hotly debated topics in urban economics. Understanding which factors genuinely drive price variation — and which are merely correlated — requires moving beyond intuition into rigorous statistical inference. This project uses the <strong>Boston Housing Dataset</strong>, a canonical benchmark in the statistics and machine learning community, to explore exactly that question.</p>
+            <p>The dataset contains 506 observations of Boston-area neighbourhoods, each described by 13 predictor variables including crime rate, proximity to the Charles River, nitric oxide concentration, average number of rooms, distance to employment centres, property tax rate, and the percentage of lower-status population. The project is entirely in <em>R</em>, leveraging base R for statistical modelling and <strong>ggplot2</strong> for publication-quality visualisations.</p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Statistical Methodology</div>
+          <div class="msec-body">
+            <p><strong>Descriptive Analysis:</strong> The analysis began with a thorough exploratory phase — computing summary statistics, assessing distributional shapes through histograms, and identifying potential outliers through boxplots. The target variable (MEDV — median house value) showed a right-skewed distribution with a notable concentration at the $50k ceiling, suggesting data censoring at the upper end.</p>
+            <p><strong>Correlation Analysis:</strong> A full correlation matrix was computed across all 13 predictor variables. Several strong linear relationships emerged: the percentage of lower-status population (LSTAT) showed a strong negative correlation with house prices (r = −0.74), while the average number of rooms (RM) showed a strong positive correlation (r = +0.70). These became natural candidates for the simple linear regression models.</p>
+            <p><strong>Multiple Linear Regression:</strong> A full multiple regression model was built using all 13 predictors. Forward selection and backward elimination were both explored to identify the most parsimonious model. The final selected model included 9 predictors and achieved an Adjusted R² of 0.731 — explaining 73.1% of the variance in median house prices.</p>
+            <p><strong>Regression Diagnostics:</strong> Model assumptions were rigorously evaluated using diagnostic plots: a Residuals vs Fitted plot for linearity and homoscedasticity, a Q-Q plot for normality, a Scale-Location plot for heteroscedasticity, and a Cook's Distance plot to identify influential observations.</p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Key Findings</div>
+          <div class="finding-list">
+            <div class="finding-item"><strong>LSTAT is the Strongest Single Predictor</strong>The percentage of lower-status population alone accounted for 54% of price variance in simple linear regression (R² = 0.544). Each 1% increase in LSTAT was associated with a $950 decrease in median house value, holding all else equal.</div>
+            <div class="finding-item"><strong>Room Count Has a Non-Linear Relationship</strong>While RM showed strong positive correlation, the scatter plot revealed a non-linear pattern at both extremes — very small and very large homes deviated from the linear trend, suggesting a log transformation of RM would improve model fit in a follow-up study.</div>
+            <div class="finding-item"><strong>Riverside Properties Command a Price Premium</strong>Properties bordering the Charles River (CHAS = 1) commanded a statistically significant price premium of approximately $2,690 over comparable non-riverside properties (p = 0.012), even after controlling for all other variables.</div>
+            <div class="finding-item"><strong>Tax Rate &amp; Employment Distance Create Trade-offs</strong>Higher property tax rates (TAX) were negatively associated with prices, but this effect was partially offset by proximity to employment centres — well-connected, taxed areas still commanded price premiums over poorly-connected, low-tax areas.</div>
+            <div class="finding-item"><strong>Multicollinearity Required Variable Removal</strong>TAX was dropped from the final model due to a VIF of 9.2, indicating strong multicollinearity with RAD (highway accessibility). Removing it improved model stability without significantly changing predictive accuracy.</div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Challenges &amp; Solutions</div>
+          <div class="ci-list">
+            <div class="ci-item"><div class="ci-bullet">01</div><div>The target variable's censoring at $50k (506 observations capped at 50 in the dataset) violated the normality assumption. Sensitivity analysis was conducted both with and without these censored observations to quantify their impact on coefficient estimates.</div></div>
+            <div class="ci-item"><div class="ci-bullet">02</div><div>Multicollinearity between TAX, RAD and LSTAT was detected using Variance Inflation Factors. TAX was removed from the final model, and the remaining predictors showed acceptable VIF values below 5.</div></div>
+            <div class="ci-item"><div class="ci-bullet">03</div><div>Three high-leverage observations identified via Cook's Distance were found to have disproportionate influence. The model was re-fitted without them — coefficient changes were within 5%, confirming the overall model's robustness to these outliers.</div></div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Outcome &amp; Learnings</div>
+          <div class="msec-body">
+            <p>This project gave me a deep, hands-on understanding of the full inferential statistics pipeline — from exploratory visualisation through to model diagnostics and interpretation. It moved me well beyond "fitting a line" into genuinely understanding what coefficients mean, why assumptions matter, and how to be honest about a model's limitations.</p>
+            <p>The project also taught me the importance of <strong>communicating statistical findings to non-statisticians</strong>. The final output wasn't just a model — it was a narrative: here are the factors that matter, here's how much they matter, here's what we can and can't conclude from this data.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-sidebar">
+        <div class="sidebar-widget">
+          <div class="sw-title">// Tech Stack</div>
+          <div class="sw-tags">
+            <span class="sw-tag">R Language</span><span class="sw-tag">ggplot2</span>
+            <span class="sw-tag">dplyr</span><span class="sw-tag">car package</span>
+            <span class="sw-tag">base stats</span>
+          </div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Project Stats</div>
+          <div class="sw-stat"><span class="sw-stat-key">dataset</span><span class="sw-stat-val">Boston Housing</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">observations</span><span class="sw-stat-val">506 records</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">predictors</span><span class="sw-stat-val">13 variables</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">adj_r_squared</span><span class="sw-stat-val">0.731</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">models_built</span><span class="sw-stat-val">5 (SLR + MLR)</span></div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Methods</div>
+          <div class="sw-tags">
+            <span class="sw-tag">OLS Regression</span><span class="sw-tag">Hypothesis Testing</span>
+            <span class="sw-tag">VIF / Multicollinearity</span><span class="sw-tag">Residual Diagnostics</span>
+            <span class="sw-tag">Cook's Distance</span><span class="sw-tag">Model Selection</span>
+          </div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Repository</div>
+          <a class="sw-github-btn" href="https://github.com/CGeethaka/Housing-Prices-Inferential-Analysis-R/tree/main" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL 3 — Airline Satisfaction ══ -->
+<div class="proj-modal" id="modal3">
+  <div class="modal-topbar">
+    <div class="modal-breadcrumb">
+      <span>PROJECTS</span><span class="mb-sep"> / </span>
+      <span class="mb-active">AIRLINE PASSENGER SATISFACTION ANALYSIS</span>
+    </div>
+    <button class="modal-close-btn" onclick="closeModal()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      ESC / Close
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-hero">
+      <div class="modal-proj-num">// PROJECT_03.ipynb</div>
+      <div class="modal-badges">
+        <span class="pbadge pb-purple">Python</span>
+        <span class="pbadge pb-cyan">EDA</span>
+        <span class="pbadge pb-amber">Data Visualisation</span>
+        <span class="pbadge pb-purple">Pandas</span>
+        <span class="pbadge pb-cyan">Seaborn</span>
+      </div>
+      <h2 class="modal-title">Airline Passenger Satisfaction Analysis</h2>
+      <p class="modal-tagline">A comprehensive exploratory data analysis of 12,981 airline passenger records — uncovering which service dimensions, demographics and flight characteristics are the strongest predictors of customer satisfaction in commercial aviation.</p>
+    </div>
+    <div class="modal-content">
+      <div class="modal-main">
+        <div class="modal-section">
+          <div class="msec-title">Project Overview</div>
+          <div class="msec-body">
+            <p>In an industry where customers have abundant choice and switching costs are low, understanding the drivers of passenger satisfaction is directly tied to loyalty, revenue and reputation. Airlines invest heavily in customer experience programmes, but without rigorous data analysis, those investments may be targeted at the wrong levers.</p>
+            <p>This project analysed a dataset of <strong>12,981 airline passengers</strong>, each rated across multiple service dimensions (seat comfort, food quality, online boarding, in-flight entertainment, leg room, baggage handling, check-in service, cleanliness and more), along with demographic variables (age, gender, customer type) and flight characteristics (flight distance, departure delay, arrival delay, travel class).</p>
+            <p>The analytical goal was to move from raw data to <em>actionable insights</em> — answering questions an airline's customer experience team would genuinely care about: Who is most likely to be dissatisfied? Which service dimensions have the highest impact? Does flight distance change the satisfaction equation?</p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Analytical Approach</div>
+          <div class="msec-body">
+            <p><strong>Data Cleaning:</strong> The dataset was imported into a Pandas DataFrame and subjected to thorough quality assessment. Missing values were found primarily in the Arrival Delay column (flights with no recorded delay, coded as missing rather than zero) and were imputed with zero after verification. Duplicate records were checked and removed. Categorical variables were label-encoded for downstream correlation analysis.</p>
+            <p><strong>Univariate Analysis:</strong> Each variable was examined individually to understand its distribution. Satisfaction was binary (satisfied vs. neutral/dissatisfied) with a roughly 57/43 split. Service rating variables were ordinal (0–5) and their distributions were plotted as histograms to identify rating clusters and potential ceiling/floor effects.</p>
+            <p><strong>Bivariate &amp; Multivariate Analysis:</strong> The core analysis involved systematically examining the relationship between each potential driver and the satisfaction outcome. Grouped bar charts, KDE plots and violin plots were used to visualise how satisfaction rates varied across demographic segments, travel classes and service rating levels. A correlation heatmap was constructed across all numeric variables to identify multicollinearity and co-varying factors.</p>
+            <p><strong>Visualisation Strategy:</strong> All visualisations were built in Seaborn and Matplotlib using a progressive disclosure principle — starting with the big picture (overall satisfaction rates) and drilling into progressively finer-grained breakdowns. Each chart was annotated with percentage values to make insights immediately readable without requiring axis interpretation.</p>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Key Findings</div>
+          <div class="finding-list">
+            <div class="finding-item"><strong>Business Class Is Dramatically More Satisfied</strong>Business class passengers showed a satisfaction rate of 69.4%, compared to 24.1% in Economy and 58.2% in Economy Plus. The gap was most pronounced in in-flight entertainment, seat comfort and food/drink ratings — the dimensions where class experience diverges most sharply.</div>
+            <div class="finding-item"><strong>Online Boarding &amp; Wi-Fi Are the Highest-Impact Levers</strong>Among all service dimensions, online boarding and in-flight Wi-Fi showed the strongest correlation with overall satisfaction. Passengers who rated these 4 or above were 3.2× more likely to report being satisfied overall — despite these being relatively low-cost improvements for airlines.</div>
+            <div class="finding-item"><strong>Departure Delays Have a Clear Threshold Effect</strong>Satisfaction dropped sharply for delays exceeding 45 minutes, but minimal differences were observed between 0–30 minute delays and on-time flights. Passengers broadly tolerate minor delays but have a clear psychological threshold at around 45 minutes.</div>
+            <div class="finding-item"><strong>Loyal Customers Are More Tolerant but Not Immune</strong>Returning/loyal customers showed higher baseline satisfaction (62%) compared to first-time travellers (43%), but were equally affected by departure delays and poor in-flight Wi-Fi — loyalty does not provide full insulation from service failures.</div>
+            <div class="finding-item"><strong>Age Interacts with Flight Distance</strong>Younger passengers (under 35) showed higher satisfaction on short-haul flights but significantly lower satisfaction on long-haul flights (5+ hours), particularly on seat comfort and entertainment. Older passengers showed more consistent satisfaction across distances, reflecting different comfort expectations.</div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Challenges &amp; Solutions</div>
+          <div class="ci-list">
+            <div class="ci-item"><div class="ci-bullet">01</div><div>The dataset had a class imbalance between Business and Economy passengers (~40/60 split). Analyses involving class-level comparisons were performed with proportional weighting to avoid the majority class dominating aggregate statistics.</div></div>
+            <div class="ci-item"><div class="ci-bullet">02</div><div>Several service dimension variables were highly intercorrelated (e.g., cleanliness and food ratings), making it difficult to attribute satisfaction effects to individual dimensions in isolation. Factor analysis was scoped as a meaningful next step.</div></div>
+            <div class="ci-item"><div class="ci-bullet">03</div><div>Arrival and departure delay variables had extreme right-skewed distributions with outliers up to 1,592 minutes. Log-transformation was applied when computing correlation coefficients to reduce the influence of these extreme values on the magnitudes.</div></div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="msec-title">Outcome &amp; Learnings</div>
+          <div class="msec-body">
+            <p>This project was my deepest dive into Python-based data analysis and gave me strong confidence with the full Pandas/Seaborn/Matplotlib stack. Working with a real-world dataset of nearly 13,000 records reinforced the importance of methodical data validation before analysis — assumptions that seem safe often aren't.</p>
+            <p>The most valuable skill I developed was <strong>translating visual patterns into business recommendations</strong>. It's one thing to notice that Business class passengers are more satisfied — it's another to articulate that the gap is driven by three specific, actionable service dimensions, and that closing that gap in Economy for these dimensions offers the highest ROI for passenger experience investment.</p>
+            <p>This project also sparked my interest in building a follow-up classification model — using the satisfaction label as the target and the service dimensions as features — the natural next step from EDA into predictive modelling territory.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-sidebar">
+        <div class="sidebar-widget">
+          <div class="sw-title">// Tech Stack</div>
+          <div class="sw-tags">
+            <span class="sw-tag">Python 3</span><span class="sw-tag">Pandas</span>
+            <span class="sw-tag">NumPy</span><span class="sw-tag">Seaborn</span>
+            <span class="sw-tag">Matplotlib</span><span class="sw-tag">Jupyter</span>
+          </div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Project Stats</div>
+          <div class="sw-stat"><span class="sw-stat-key">records</span><span class="sw-stat-val">12,981</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">features</span><span class="sw-stat-val">23 variables</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">charts_created</span><span class="sw-stat-val">18+</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">satisfaction_rate</span><span class="sw-stat-val">57.3%</span></div>
+          <div class="sw-stat"><span class="sw-stat-key">domain</span><span class="sw-stat-val">Aviation / CX</span></div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Analysis Types</div>
+          <div class="sw-tags">
+            <span class="sw-tag">Univariate EDA</span><span class="sw-tag">Bivariate Analysis</span>
+            <span class="sw-tag">Correlation Heatmap</span><span class="sw-tag">Segmentation</span>
+            <span class="sw-tag">Distribution Analysis</span><span class="sw-tag">Outlier Detection</span>
+          </div>
+        </div>
+        <div class="sidebar-widget">
+          <div class="sw-title">// Repository</div>
+          <a class="sw-github-btn" href="https://github.com/CGeethaka/Airline-Passenger-Satisfaction" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// MODAL SYSTEM
+// ══════════════════════════════════════════════
+let activeModal = null;
+
+function openModal(id) {
+  if (activeModal) closeModal(true);
+  const overlay = document.getElementById('modalOverlay');
+  const modal   = document.getElementById(id);
+  if (!modal) return;
+  document.body.style.overflow = 'hidden';
+  overlay.classList.add('open');
+  requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('open')));
+  const mb = modal.querySelector('.modal-body');
+  if (mb) mb.scrollTop = 0;
+  activeModal = modal;
+}
+
+function closeModal(instant) {
+  const overlay = document.getElementById('modalOverlay');
+  if (activeModal) {
+    if (instant) { activeModal.style.transition='none'; setTimeout(()=>{ if(activeModal) activeModal.style.transition=''; },50); }
+    activeModal.classList.remove('open');
+    activeModal = null;
+  }
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && activeModal) closeModal(); });
+</script>
+
+</body>
+</html>
